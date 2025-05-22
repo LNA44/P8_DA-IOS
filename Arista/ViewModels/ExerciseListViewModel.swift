@@ -6,30 +6,30 @@
 //
 
 import Foundation
-
 import CoreData
 
 class ExerciseListViewModel: ObservableObject {
-    @Published var exercises = [FakeExercise]()
+	//MARK: -Public properties
+    @Published var exercises = [Exercise]() //tableau vide
+	var viewContext: NSManagedObjectContext
 
-    var viewContext: NSManagedObjectContext
-
+	//MARK: -Initialization
     init(context: NSManagedObjectContext) {
         self.viewContext = context
-        fetchExercises()
+        fetchExercises() //prépare les données avant la création de la vue
     }
 
+	//MARK: -Methods
     private func fetchExercises() {
-        // TODO: fetch data in CoreData and replace dumb value below with appropriate information
-        exercises = [FakeExercise(), FakeExercise(), FakeExercise()]
+		do {
+			let data = ExerciseRepository(viewContext: viewContext)
+			exercises = try data.getExercise()
+		} catch {
+			
+		}
     }
-}
-
-struct FakeExercise: Identifiable {
-    var id = UUID()
-    
-    var category: String = "Football"
-    var duration: Int = 120
-    var intensity: Int = 8
-    var date: Date = Date()
+	
+	func reload() {
+		fetchExercises()
+	}
 }

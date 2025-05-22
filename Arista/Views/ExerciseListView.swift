@@ -15,18 +15,21 @@ struct ExerciseListView: View {
         NavigationView {
             List(viewModel.exercises) { exercise in
                 HStack {
-                    Image(systemName: iconForCategory(exercise.category))
+                    Image(systemName: iconForCategory(exercise.category ?? "default"))
                     VStack(alignment: .leading) {
-                        Text(exercise.category)
+                        Text(exercise.category ?? "default")
                             .font(.headline)
                         Text("Durée: \(exercise.duration) min")
                             .font(.subheadline)
-                        Text(exercise.date.formatted())
-                            .font(.subheadline)
-                        
+						if let startDate = exercise.startDate {
+							Text(startDate.formatted())
+								.font(.subheadline)
+						} else {
+							Text("Pas de date")
+						}
                     }
                     Spacer()
-                    IntensityIndicator(intensity: exercise.intensity)
+					IntensityIndicator(intensity: Int(exercise.intensity))
                 }
             }
             .navigationTitle("Exercices")
@@ -36,10 +39,12 @@ struct ExerciseListView: View {
                 Image(systemName: "plus")
             })
         }
-        .sheet(isPresented: $showingAddExerciseView) {
+		
+        .sheet(isPresented: $showingAddExerciseView, onDismiss: {
+			viewModel.reload() //recharge les données à la disparition de AddExerciseView
+		}) {
             AddExerciseView(viewModel: AddExerciseViewModel(context: viewModel.viewContext))
         }
-        
     }
     
     func iconForCategory(_ category: String) -> String {

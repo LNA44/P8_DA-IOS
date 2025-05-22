@@ -16,7 +16,11 @@ struct SleepHistoryView: View {
                     QualityIndicator(quality: session.quality)
                         .padding()
                     VStack(alignment: .leading) {
-                        Text("Début : \(session.startDate.formatted())")
+						if let date = session.startDate {
+							Text("Début : \(date.formatted())")
+						} else {
+							Text("Pas de date de début")
+						}
                         Text("Durée : \(session.duration/60) heures")
                     }
                 }
@@ -26,16 +30,16 @@ struct SleepHistoryView: View {
 }
 
 struct QualityIndicator: View {
-    let quality: Int
+    let quality: Int64
 
     var body: some View {
         ZStack {
             Circle()
-                .stroke(qualityColor(quality), lineWidth: 5)
-                .foregroundColor(qualityColor(quality))
+                .stroke(qualityColor(Int(quality)), lineWidth: 5)
+                .foregroundColor(qualityColor(Int(quality)))
                 .frame(width: 30, height: 30)
             Text("\(quality)")
-                .foregroundColor(qualityColor(quality))
+                .foregroundColor(qualityColor(Int(quality)))
         }
     }
 

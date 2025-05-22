@@ -9,19 +9,55 @@ import Foundation
 import CoreData
 
 class AddExerciseViewModel: ObservableObject {
+	//MARK: -Public properties
     @Published var category: String = ""
-    @Published var startTime: String = ""
-    @Published var duration: String = ""
-    @Published var intensity: String = ""
+	@Published var startTimeString: String = "" { // car vient d'un textField
+		didSet {
+			guard let date = convertStringToDate(startTimeString) else {
+				return
+			}
+			startTime = date
+		}
+	}
+    @Published var startTime: Date = Date()
+	@Published var durationString: String = "" {
+		didSet {
+			guard let int = Int(durationString) else {
+				return
+			}
+			duration = int
+		}
+	}
+    @Published var duration: Int = 0
+	@Published var intensityString: String = "" {
+		didSet {
+			guard let int = Int(intensityString) else {
+				return
+			}
+			intensity = int
+		}
+	}
+    @Published var intensity: Int = 0
+	var viewContext: NSManagedObjectContext
 
-    private var viewContext: NSManagedObjectContext
-
+	//MARK: -Initialization
     init(context: NSManagedObjectContext) {
         self.viewContext = context
     }
-
+	
+	//MARK: -Methods
     func addExercise() -> Bool {
-        // TODO: Ajouter ici la logique pour créer et sauvegarder un nouvel exercice dans CoreData
-        return true
+		do {
+			try ExerciseRepository().addExercise(category: category, duration: duration, intensity: intensity, startDate: startTime)
+			return true
+		} catch {
+			return false
+		}
     }
+	
+	private func convertStringToDate(_ dateString: String) -> Date? {
+		let dateFormatter = DateFormatter()
+		dateFormatter.dateFormat = "HH:mm"
+		return dateFormatter.date(from: dateString)
+	}
 }
