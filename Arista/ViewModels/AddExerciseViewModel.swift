@@ -38,6 +38,8 @@ class AddExerciseViewModel: ObservableObject {
 		}
 	}
     @Published var intensity: Int = 0
+	@Published var errorMessage: String?
+	@Published var showAlert: Bool = false
 	var viewContext: NSManagedObjectContext
 
 	//MARK: -Initialization
@@ -50,6 +52,10 @@ class AddExerciseViewModel: ObservableObject {
 		do {
 			try ExerciseRepository().addExercise(category: category, duration: duration, intensity: intensity, startDate: startTime)
 			return true
+		} catch let error as HandleErrors.ExerciseError {
+				errorMessage = error.errorDescription
+				showAlert = true
+			return false
 		} catch {
 			return false
 		}

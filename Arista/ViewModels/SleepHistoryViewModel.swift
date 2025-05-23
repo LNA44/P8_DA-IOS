@@ -11,6 +11,8 @@ import CoreData
 class SleepHistoryViewModel: ObservableObject {
 	//MARK: -Public properties
     @Published var sleepSessions = [Sleep]()
+	@Published var errorMessage: String?
+	@Published var showAlert: Bool = false
     
 	//MARK: -Private properties
     private var viewContext: NSManagedObjectContext
@@ -26,8 +28,10 @@ class SleepHistoryViewModel: ObservableObject {
 		do {
 			let data = SleepRepository(viewContext: viewContext)
 			sleepSessions = try data.getSleepSessions()
+		} catch let error as NSError {
+			errorMessage = "An error occurred while loading your data."
 		} catch {
-			
+			errorMessage = "Unknown error happened : \(error.localizedDescription)"
 		}
     }
 }

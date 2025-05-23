@@ -12,6 +12,8 @@ class UserDataViewModel: ObservableObject {
 	//MARK: -Public properties
     @Published var firstName: String = ""
     @Published var lastName: String = ""
+	@Published var errorMessage: String?
+	@Published var showAlert: Bool = false
 
 	//MARK: -Private properties
     private var viewContext: NSManagedObjectContext
@@ -30,9 +32,10 @@ class UserDataViewModel: ObservableObject {
 			}
 			firstName = "Charlotte"
 			lastName = "Corino"
+		} catch let error as NSError { //erreur de CoraData liée à l'exécution de la requete fetch
+			errorMessage = "An error occurred while loading your data."
 		} catch {
-			
+			errorMessage = "Unknown error happened : \(error.localizedDescription)"
 		}
-        
     }
 }

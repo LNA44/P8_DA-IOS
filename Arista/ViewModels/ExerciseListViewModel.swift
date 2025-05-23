@@ -11,6 +11,8 @@ import CoreData
 class ExerciseListViewModel: ObservableObject {
 	//MARK: -Public properties
     @Published var exercises = [Exercise]() //tableau vide
+	@Published var errorMessage: String?
+	@Published var showAlert: Bool = false
 	var viewContext: NSManagedObjectContext
 
 	//MARK: -Initialization
@@ -24,8 +26,11 @@ class ExerciseListViewModel: ObservableObject {
 		do {
 			let data = ExerciseRepository(viewContext: viewContext)
 			exercises = try data.getExercise()
+		} catch let error as NSError {
+			errorMessage = "An error occurred while loading your data."
+			showAlert = true
 		} catch {
-			
+			errorMessage = "Unknown error happened : \(error.localizedDescription)"
 		}
     }
 	
