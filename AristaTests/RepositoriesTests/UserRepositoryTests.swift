@@ -12,11 +12,11 @@ import CoreData
 final class UserRepositoryTests: XCTestCase {
 	//nettoie la base avant chaque test
 	private func emptyEntities(context: NSManagedObjectContext) {
-		let fetchRequest = Exercise.fetchRequest()
+		let fetchRequest = User.fetchRequest()
 		let objects = try! context.fetch(fetchRequest)
 		
-		for exercise in objects {
-			context.delete(exercise)
+		for users in objects {
+			context.delete(users)
 		}
 		
 		try! context.save()
@@ -40,7 +40,7 @@ final class UserRepositoryTests: XCTestCase {
 		//Then
 		XCTAssertNil(user)
 	}
-	
+	//A REVOIR
 	func test_WhenAddingOneUserInDataBase_GetUser_ReturnTheUser() {
 		//Given
 		let persistenceController = PersistenceController(inMemory: true)
@@ -56,7 +56,7 @@ final class UserRepositoryTests: XCTestCase {
 		XCTAssertEqual(user?.firstName, "Eric")
 		XCTAssertEqual(user?.lastName, "Marceau")
 	}
-	
+	//A REVOIR
 	func test_WhenAddingSeveralUsersInDataBase_GetUser_ReturnTheFirstUser() {
 		//Given
 		let persistenceController = PersistenceController(inMemory: true)

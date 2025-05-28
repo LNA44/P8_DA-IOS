@@ -21,17 +21,18 @@ class SleepHistoryViewModel: ObservableObject {
     init(context: NSManagedObjectContext) {
         self.viewContext = context
         fetchSleepSessions()
+		print("ViewModel context: \(context)")
     }
     
 	//MARK: -Methods
-    private func fetchSleepSessions() {
+	func fetchSleepSessions() {
 		do {
+			print("fetchSleepSessions appelée")
 			let data = SleepRepository(viewContext: viewContext)
 			sleepSessions = try data.getSleepSessions()
-		} catch let error as NSError {
-			errorMessage = "An error occurred while loading your data."
 		} catch {
 			errorMessage = "Unknown error happened : \(error.localizedDescription)"
+			showAlert = true
 		}
     }
 }

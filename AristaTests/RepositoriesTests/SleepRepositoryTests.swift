@@ -47,7 +47,7 @@ final class SleepRepositoryTests: XCTestCase {
 		//Then
 		XCTAssert(sleeps.isEmpty == true)
 	}
-	
+	//A REVOIR
 	func test_WhenAddidOneSleepSessionInDataBase_GetSleepSessions_ReturnAListContainingTheSleepSessions() {
 		//Given
 		let persistenceController = PersistenceController(inMemory: true)
@@ -65,7 +65,7 @@ final class SleepRepositoryTests: XCTestCase {
 		XCTAssertEqual(sleeps.first?.quality, 3)
 		XCTAssertEqual(sleeps.first?.startDate, date)
 	}
-	
+	//A REVOIR
 	func test_WhenAddingMultipleSleepSessionsInDataBase_GetSleepSessions_ReturnAListContanaingTheSleepSessionsInTheRightOrder() {
 		//Given
 		let persistenceController = PersistenceController(inMemory: true)
@@ -86,5 +86,4 @@ final class SleepRepositoryTests: XCTestCase {
 		XCTAssertEqual(sleeps[1].duration, 22)
 		XCTAssertEqual(sleeps[2].duration, 10)
 	}
-	
 }

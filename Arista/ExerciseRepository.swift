@@ -8,12 +8,16 @@
 import Foundation
 import CoreData
 
-struct ExerciseRepository {
+protocol ExerciseRepositoryProtocol { //permet de le mocker
+	func addExercise(category: String, duration: Int, intensity: Int, startDate: Date) throws
+}
+
+struct ExerciseRepository: ExerciseRepositoryProtocol {
 	//MARK: -Properties
 	let viewContext: NSManagedObjectContext
 	
 	//MARK: -Initialization
-	init(viewContext: NSManagedObjectContext = PersistenceController.shared.container.viewContext) {
+	init(viewContext: NSManagedObjectContext) {
 		self.viewContext = viewContext
 	}
 	

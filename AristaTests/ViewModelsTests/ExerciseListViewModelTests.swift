@@ -14,16 +14,16 @@ final class ExerciseListViewModelTests: XCTestCase {
 	var cancellables = Set<AnyCancellable>()
 	
 	//nettoie la base avant chaque test
-		private func emptyEntities(context: NSManagedObjectContext) {
-			let fetchRequest = Exercise.fetchRequest()
-			let objects = try! context.fetch(fetchRequest)
-			
-			for exercise in objects {
-				context.delete(exercise)
-			}
-			
-			try! context.save()
+	private func emptyEntities(context: NSManagedObjectContext) {
+		let fetchRequest = Exercise.fetchRequest()
+		let objects = try! context.fetch(fetchRequest)
+		
+		for exercise in objects {
+			context.delete(exercise)
 		}
+		
+		try! context.save()
+	}
 
 	private func addExercise(context: NSManagedObjectContext, category: String, duration: Int, intensity: Int, startDate: Date, userFirstName: String, userLastName: String) {
 		let newUser = User(context: context)
@@ -65,7 +65,7 @@ final class ExerciseListViewModelTests: XCTestCase {
 			.store(in : &cancellables) //conserve la souscription à @Published pendant tout le test
 		wait(for: [expectation], timeout: 10) //test attend que expectation.fulfill() soit appelé sous max 10sec
 	}
-	
+	//A REVOIR
 	func test_WhenAddingOneExerciseInDatabase_FetchExercise_ReturnAListContainingThisExercise() {
 		//clean manually all data
 		let persistenceController = PersistenceController(inMemory: true)
@@ -88,7 +88,7 @@ final class ExerciseListViewModelTests: XCTestCase {
 			.store(in: &cancellables)
 			wait(for: [expectation], timeout: 10)
 	}
-	
+	//A REVOIR
 	func test_WhenAddingMultipleExerciseInDatabase_FetchExercise_ReturnAListContainingTheExerciseInTheRightOrder() {
 		// clean manually all data
 		let persistenceController = PersistenceController(inMemory: true)

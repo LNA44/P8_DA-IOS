@@ -26,11 +26,9 @@ class ExerciseListViewModel: ObservableObject {
 		do {
 			let data = ExerciseRepository(viewContext: viewContext)
 			exercises = try data.getExercise()
-		} catch let error as NSError {
-			errorMessage = "An error occurred while loading your data."
-			showAlert = true
 		} catch {
 			errorMessage = "Unknown error happened : \(error.localizedDescription)"
+			showAlert = true
 		}
     }
 	

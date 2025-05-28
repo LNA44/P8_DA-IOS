@@ -48,7 +48,7 @@ final class ExerciseRepositoryTests: XCTestCase {
 		//Then
 		XCTAssert(exercises.isEmpty == true)
 	}
-	
+	//A REVOIR
 	func test_WhenAddidOneExerciseInDataBase_GetExercise_ReturnAListContainingTheExercise() {
 		//Given
 		let persistenceController = PersistenceController(inMemory: true)
@@ -67,7 +67,7 @@ final class ExerciseRepositoryTests: XCTestCase {
 		XCTAssert(exercises.first?.intensity == 5)
 		XCTAssert(exercises.first?.startDate == date)
 	}
-	
+	//A REVOIR
 	func test_WhenAddingMultipleExercisesInDataBase_GetExercise_ReturnAListContanaingTheExercisesInTheRightOrder() {
 		//Given
 		let persistenceController = PersistenceController(inMemory: true)
@@ -89,7 +89,7 @@ final class ExerciseRepositoryTests: XCTestCase {
 		XCTAssert(exercises[1].category == "Fitness")
 		XCTAssert(exercises[2].category == "Running")
 	}
-	
+	//A REVOIR
 	func testAddExerciseSuccess() throws {
 		//Given
 		let persistenceController = PersistenceController(inMemory: true)

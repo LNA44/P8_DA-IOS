@@ -41,27 +41,35 @@ class AddExerciseViewModel: ObservableObject {
 	@Published var errorMessage: String?
 	@Published var showAlert: Bool = false
 	var viewContext: NSManagedObjectContext
+	let repository: ExerciseRepositoryProtocol
 
 	//MARK: -Initialization
-    init(context: NSManagedObjectContext) {
-        self.viewContext = context
-    }
+	init(context: NSManagedObjectContext, repository: ExerciseRepositoryProtocol? = nil) {
+		self.viewContext = context
+		if let repo = repository { //car context doit etre initialisé avant repository
+			self.repository = repo
+		} else { //si aucun repo passé dans l'init
+			self.repository = ExerciseRepository(viewContext: context)
+		}
+	}
 	
 	//MARK: -Methods
-    func addExercise() -> Bool {
+	func addExercise() -> Bool {
 		do {
-			try ExerciseRepository().addExercise(category: category, duration: duration, intensity: intensity, startDate: startTime)
+			try repository.addExercise(category: category, duration: duration, intensity: intensity, startDate: startTime)
 			return true
 		} catch let error as HandleErrors.ExerciseError {
-				errorMessage = error.errorDescription
-				showAlert = true
+			errorMessage = error.errorDescription
+			showAlert = true
 			return false
 		} catch {
+			errorMessage = "Unknown error happened : \(error.localizedDescription)"
+			showAlert = true
 			return false
 		}
-    }
+	}
 	
-	private func convertStringToDate(_ dateString: String) -> Date? {
+	func convertStringToDate(_ dateString: String) -> Date? {
 		let dateFormatter = DateFormatter()
 		dateFormatter.dateFormat = "HH:mm"
 		return dateFormatter.date(from: dateString)

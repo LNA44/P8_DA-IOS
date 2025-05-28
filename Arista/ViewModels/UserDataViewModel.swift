@@ -27,15 +27,32 @@ class UserDataViewModel: ObservableObject {
 	//MARK: -Methods
     private func fetchUserData() {
 		do {
-			guard let user = try UserRepository().getUser() else {
-				fatalError()
+			guard let user = try UserRepository(viewContext: viewContext).getUser() else {
+				errorMessage = "No user found" // cas ou getUser() renvoie nil car aucun User
+				showAlert = true
+				firstName = ""
+				lastName = ""
+				return
 			}
-			firstName = "Charlotte"
-			lastName = "Corino"
-		} catch let error as NSError { //erreur de CoraData liée à l'exécution de la requete fetch
-			errorMessage = "An error occurred while loading your data."
+			guard let unwrappedFirstName = user.firstName else {
+				errorMessage = "User first name is missing"
+				showAlert = true
+				firstName = ""
+				lastName = ""
+				return
+			}
+			guard let unwrappedLastName = user.lastName else {
+				errorMessage = "User last name is missing"
+				showAlert = true
+				firstName = ""
+				lastName = ""
+				return
+			}
+			firstName = unwrappedFirstName
+			lastName = unwrappedLastName
 		} catch {
 			errorMessage = "Unknown error happened : \(error.localizedDescription)"
+			showAlert = true
 		}
     }
 }

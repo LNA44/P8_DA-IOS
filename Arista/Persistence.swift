@@ -28,6 +28,7 @@ struct PersistenceController {
     let container: NSPersistentContainer
 
     init(inMemory: Bool = false) {
+		print("PersistenceController init - inMemory: \(inMemory)")
         container = NSPersistentContainer(name: "Arista") //charge le modèle Arista
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null") //données vont dans un faux fichier donc jamais réellement écrites
