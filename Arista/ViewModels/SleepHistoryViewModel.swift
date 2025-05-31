@@ -21,7 +21,6 @@ class SleepHistoryViewModel: ObservableObject {
     init(context: NSManagedObjectContext) {
         self.viewContext = context
         fetchSleepSessions()
-		print("ViewModel context: \(context)")
     }
     
 	//MARK: -Methods

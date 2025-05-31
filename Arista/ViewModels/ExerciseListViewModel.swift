@@ -24,6 +24,7 @@ class ExerciseListViewModel: ObservableObject {
 	//MARK: -Methods
     private func fetchExercises() {
 		do {
+			print("fetchExercises appelée")
 			let data = ExerciseRepository(viewContext: viewContext)
 			exercises = try data.getExercise()
 		} catch {

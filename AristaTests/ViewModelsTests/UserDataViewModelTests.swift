@@ -56,4 +56,37 @@ final class UserDataViewModelTests: XCTestCase {
 			.store(in : &cancellables) //conserve la souscription à @Published pendant tout le test
 		wait(for: [expectation1,expectation2], timeout: 10) //test attend que les deux expectation.fulfill() soient appelés sous max 10sec
 	}
+	
+	func test_WhenOneUserIsInDatabase_FetchUser_returnFirstNameAndLastName() {
+		//Clean manually all data
+		let persistenceController = PersistenceController(inMemory: true)
+		emptyEntities(context: persistenceController.container.viewContext)
+		
+		addUser(context: persistenceController.container.viewContext, firstName: "Eric", lastName: "Marceau")
+		
+		let viewModel = UserDataViewModel(context: persistenceController.container.viewContext)
+		
+		let expectation1 = XCTestExpectation(description: "Fetch firstName")
+		let expectation2 = XCTestExpectation(description: "Fetch lastName")
+		
+		viewModel.$firstName //observation du @Published firstName via combine
+			.dropFirst()
+			.sink { firstName in //quand valeur de firstName change(même s'il est vide alors le bloc est exécuté)
+				print("Received firstName: \(firstName)")
+				XCTAssertEqual(firstName, "")
+				expectation1.fulfill()
+			}
+			.store(in : &cancellables) //conserve la souscription à @Published pendant tout le test
+		
+		viewModel.$lastName //observation du @Published lastName via combine
+			.dropFirst() 
+			.sink { lastName in //quand valeur de lastName change(même s'il est vide alors le bloc est exécuté)
+				XCTAssertEqual(lastName, "")
+				expectation2.fulfill()
+			}
+		
+			.store(in : &cancellables) //conserve la souscription à @Published pendant tout le test
+		
+		wait(for: [expectation1,expectation2], timeout: 10) //test attend que les deux expectation.fulfill() soient appelés sous max 10sec
+	}
 }

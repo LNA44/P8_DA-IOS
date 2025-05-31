@@ -9,8 +9,13 @@ import SwiftUI
 
 @main
 struct AristaApp: App {
-    let persistenceController = PersistenceController.shared
-    
+	//let persistenceController = PersistenceController.shared
+	let persistenceController: PersistenceController
+
+		init() {
+			self.persistenceController = PersistenceController()
+		}
+
     var body: some Scene {
         WindowGroup {
             TabView {

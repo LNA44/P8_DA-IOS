@@ -13,7 +13,7 @@ struct DefaultData {
 	let viewContext: NSManagedObjectContext
 	
 	//MARK: -Initialization
-	init(viewContext: NSManagedObjectContext = PersistenceController.shared.container.viewContext) {
+	init(viewContext: NSManagedObjectContext) {
 		self.viewContext = viewContext
 	}
 	

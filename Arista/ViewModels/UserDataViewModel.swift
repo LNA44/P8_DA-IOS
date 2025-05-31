@@ -27,6 +27,7 @@ class UserDataViewModel: ObservableObject {
 	//MARK: -Methods
     private func fetchUserData() {
 		do {
+			print("fetchUserData called")
 			guard let user = try UserRepository(viewContext: viewContext).getUser() else {
 				errorMessage = "No user found" // cas ou getUser() renvoie nil car aucun User
 				showAlert = true
