@@ -13,13 +13,14 @@ class AddExerciseViewModel: ObservableObject {
     @Published var category: String = ""
 	@Published var startTimeString: String = "" { // car vient d'un textField
 		didSet {
-			guard let date = convertStringToDate(startTimeString) else {
-				return
+			if let combinedDate = convertStringToStartDate(startTimeString) {
+				startTime = combinedDate
+			} else {
+				print("Erreur de conversion de l'heure")
 			}
-			startTime = date
 		}
 	}
-    @Published var startTime: Date = Date()
+	@Published var startTime: Date = Date() //par défaut
 	@Published var durationString: String = "" {
 		didSet {
 			guard let int = Int(durationString) else {
@@ -56,7 +57,7 @@ class AddExerciseViewModel: ObservableObject {
 	//MARK: -Methods
 	func addExercise() -> Bool {
 		do {
-			try repository.addExercise(category: category, duration: duration, intensity: intensity, startDate: startTime)
+			try repository.addExercise(category: category, duration: duration, intensity: intensity, startTime: startTime)
 			return true
 		} catch let error as HandleErrors.ExerciseError {
 			errorMessage = error.errorDescription
@@ -73,5 +74,25 @@ class AddExerciseViewModel: ObservableObject {
 		let dateFormatter = DateFormatter()
 		dateFormatter.dateFormat = "HH:mm"
 		return dateFormatter.date(from: dateString)
+	}
+	
+	// Convertit une string "HH:mm" en Date qui combine la date du jour + heure saisie
+	func convertStringToStartDate(_ timeString: String) -> Date? {
+		let formatter = DateFormatter()
+		formatter.dateFormat = "HH:mm"
+		
+		guard let timeOnlyDate = formatter.date(from: timeString) else {
+			return nil
+		}
+		
+		let calendar = Calendar.current
+		let hour = calendar.component(.hour, from: timeOnlyDate)
+		let minute = calendar.component(.minute, from: timeOnlyDate)
+		
+		var components = calendar.dateComponents([.year, .month, .day], from: Date())
+		components.hour = hour
+		components.minute = minute
+		
+		return calendar.date(from: components)
 	}
 }

@@ -21,8 +21,8 @@ struct ExerciseListView: View {
                             .font(.headline)
                         Text("Durée: \(exercise.duration) min")
                             .font(.subheadline)
-						if let startDate = exercise.startDate {
-							Text(startDate.formatted())
+						if let startTime = exercise.startTime {
+							Text(startTime.formatted())
 								.font(.subheadline)
 						} else {
 							Text("Pas de date")

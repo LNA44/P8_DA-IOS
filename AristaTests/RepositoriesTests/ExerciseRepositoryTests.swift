@@ -167,24 +167,4 @@ final class ExerciseRepositoryTests: XCTestCase {
 		let exercise = try persistenceController.container.viewContext.fetch(fetchRequest)
 		XCTAssertTrue(exercise.isEmpty)
 	}
-	
-	func testAddExerciseInvalidStartDate() throws {
-		//Given
-		let persistenceController = PersistenceController(inMemory: true)
-		emptyEntities(context: persistenceController.container.viewContext)
-		let repository = ExerciseRepository(viewContext: persistenceController.container.viewContext)
-		let futureDate = Calendar.current.date(byAdding: .day, value:1,  to: Date())! //J+1
-		//When & Then
-		do {
-			try repository.addExercise(category: "Football", duration: 10, intensity: 5, startDate: futureDate)
-			XCTFail("Expected to throw an error but it didn't")
-		} catch let error as HandleErrors.ExerciseError{
-			XCTAssertEqual(error,.invalidStartDate)
-		} catch {
-			XCTFail("Unknown error happened \(error)")
-		}
-		let fetchRequest = Exercise.fetchRequest()
-		let exercise = try persistenceController.container.viewContext.fetch(fetchRequest)
-		XCTAssertTrue(exercise.isEmpty)
-	}
 }

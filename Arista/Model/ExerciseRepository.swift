@@ -2,14 +2,14 @@
 //  ExerciseRepository.swift
 //  Arista
 //
-//  Created by Ordinateur elena on 21/05/2025.
+//  Created by Ordinateur elena on 07/06/2025.
 //
 
 import Foundation
 import CoreData
 
 protocol ExerciseRepositoryProtocol { //permet de le mocker
-	func addExercise(category: String, duration: Int, intensity: Int, startDate: Date) throws
+	func addExercise(category: String, duration: Int, intensity: Int, startTime: Date) throws
 }
 
 struct ExerciseRepository: ExerciseRepositoryProtocol {
@@ -33,11 +33,11 @@ struct ExerciseRepository: ExerciseRepositoryProtocol {
 	//MARK: -Methods
 	func getExercise() throws -> [Exercise] {
 		let request = Exercise.fetchRequest()
-		request.sortDescriptors = [NSSortDescriptor(SortDescriptor<Exercise>(\.startDate, order:.reverse))]
+		request.sortDescriptors = [NSSortDescriptor(SortDescriptor<Exercise>(\.startTime, order:.reverse))]
 		return try viewContext.fetch(request)
 	}
 	
-	func addExercise(category: String, duration: Int, intensity: Int, startDate: Date) throws {
+	func addExercise(category: String, duration: Int, intensity: Int, startTime: Date) throws {
 		guard isValidCategory(category) else {
 			throw HandleErrors.ExerciseError.invalidCategory
 		}
@@ -47,14 +47,11 @@ struct ExerciseRepository: ExerciseRepositoryProtocol {
 		guard (0...10).contains(intensity) else {
 			throw HandleErrors.ExerciseError.invalidIntensity
 		}
-		guard startDate <= Date() else { //interdit dates futures
-			throw HandleErrors.ExerciseError.invalidStartDate
-		}
 		let newExercise = Exercise(context: viewContext)
 		newExercise.category = category
 		newExercise.duration = Int64(duration)
 		newExercise.intensity = Int64(intensity)
-		newExercise.startDate = startDate
+		newExercise.startTime = startTime
 		try viewContext.save()
 	}
 	
