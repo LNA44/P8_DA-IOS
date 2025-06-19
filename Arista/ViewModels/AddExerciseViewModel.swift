@@ -16,7 +16,7 @@ class AddExerciseViewModel: ObservableObject {
 			if let combinedDate = convertStringToStartDate(startTimeString) {
 				startTime = combinedDate
 			} else {
-				print("Erreur de conversion de l'heure")
+				startTime = defaultStartDate()
 			}
 		}
 	}
@@ -70,12 +70,6 @@ class AddExerciseViewModel: ObservableObject {
 		}
 	}
 	
-	func convertStringToDate(_ dateString: String) -> Date? {
-		let dateFormatter = DateFormatter()
-		dateFormatter.dateFormat = "HH:mm"
-		return dateFormatter.date(from: dateString)
-	}
-	
 	// Convertit une string "HH:mm" en Date qui combine la date du jour + heure saisie
 	func convertStringToStartDate(_ timeString: String) -> Date? {
 		let formatter = DateFormatter()
@@ -89,10 +83,25 @@ class AddExerciseViewModel: ObservableObject {
 		let hour = calendar.component(.hour, from: timeOnlyDate)
 		let minute = calendar.component(.minute, from: timeOnlyDate)
 		
+		// Vérifier la plage (0-23 pour heures, 0-59 pour minutes)
+		guard (0...23).contains(hour), (0...59).contains(minute) else {
+			return nil
+		}
+		
 		var components = calendar.dateComponents([.year, .month, .day], from: Date())
 		components.hour = hour
 		components.minute = minute
 		
 		return calendar.date(from: components)
+	}
+	
+	private func defaultStartDate() -> Date {
+		var components = DateComponents()
+		components.year = 2000
+		components.month = 1
+		components.day = 1
+		components.hour = 0
+		components.minute = 0
+		return Calendar.current.date(from: components)!
 	}
 }

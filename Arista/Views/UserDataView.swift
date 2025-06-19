@@ -25,6 +25,9 @@ struct UserDataView: View {
             Spacer()
         }
         .edgesIgnoringSafeArea(.all)
+		.alert(isPresented: $viewModel.showAlert) {
+			Alert(title: Text("Error"), message: Text(viewModel.errorMessage ?? ""), dismissButton: .default(Text("OK")))
+		}
     }
 }
 

@@ -26,6 +26,9 @@ struct SleepHistoryView: View {
                 }
             }
             .navigationTitle("Historique de Sommeil")
+			.alert(isPresented: $viewModel.showAlert) {
+				Alert(title: Text("Error"), message: Text(viewModel.errorMessage ?? ""), dismissButton: .default(Text("OK")))
+			}
         }
 }
 

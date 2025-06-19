@@ -29,8 +29,10 @@ struct AddExerciseView: View {
                     
             }
             .navigationTitle("Nouvel Exercice ...")
-            
         }
+		.alert(isPresented: $viewModel.showAlert) {
+			Alert(title: Text("Error"), message: Text(viewModel.errorMessage ?? ""), dismissButton: .default(Text("OK")))
+		}
     }
 }
 

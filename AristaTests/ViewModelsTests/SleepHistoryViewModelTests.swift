@@ -54,7 +54,7 @@ final class SleepHistoryViewModelTests: XCTestCase {
 			.store(in : &cancellables) //conserve la souscription à @Published pendant tout le test
 		wait(for: [expectation], timeout: 10) //test attend que les deux expectation.fulfill() soient appelés sous max 10sec
 	}
-	//A REVOIR
+	
 	func test_WhenAddingOneSleepSessionInDatabase_FetchSleepSessions_ReturnAListContainingThisSleepSession() {
 		//Clean manually all data
 		let persistenceController = PersistenceController(inMemory: true)

@@ -45,6 +45,9 @@ struct ExerciseListView: View {
 		}) {
             AddExerciseView(viewModel: AddExerciseViewModel(context: viewModel.viewContext))
         }
+		.alert(isPresented: $viewModel.showAlert) {
+			Alert(title: Text("Error"), message: Text(viewModel.errorMessage ?? ""), dismissButton: .default(Text("OK")))
+		}
     }
     
     func iconForCategory(_ category: String) -> String {

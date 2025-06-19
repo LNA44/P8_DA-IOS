@@ -79,6 +79,7 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		F3B95E362DDF2D5400DE98BE /* RepositoriesTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = RepositoriesTests; sourceTree = "<group>"; };
 		F3B95E372DDF2D6700DE98BE /* ViewModelsTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ViewModelsTests; sourceTree = "<group>"; };
+		F3C3F67B2E04547A005F1E7F /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
 		F3F2090B2DF432A200D61140 /* Model */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (F3F2090F2DF432E000D61140 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Model; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -130,6 +131,7 @@
 		53E5872F2B235E8F00E4EF99 /* Arista */ = {
 			isa = PBXGroup;
 			children = (
+				F3C3F67B2E04547A005F1E7F /* Resources */,
 				F3F2090B2DF432A200D61140 /* Model */,
 				53E587612B235FDC00E4EF99 /* ViewModels */,
 				53E587602B235FD700E4EF99 /* Views */,
@@ -204,6 +206,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				F3C3F67B2E04547A005F1E7F /* Resources */,
 			);
 			name = Arista;
 			productName = Arista;

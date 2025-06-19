@@ -40,7 +40,7 @@ final class UserRepositoryTests: XCTestCase {
 		//Then
 		XCTAssertNil(user)
 	}
-	//A REVOIR
+
 	func test_WhenAddingOneUserInDataBase_GetUser_ReturnTheUser() {
 		//Given
 		let persistenceController = PersistenceController(inMemory: true)
@@ -56,7 +56,7 @@ final class UserRepositoryTests: XCTestCase {
 		XCTAssertEqual(user?.firstName, "Eric")
 		XCTAssertEqual(user?.lastName, "Marceau")
 	}
-	//A REVOIR
+
 	func test_WhenAddingSeveralUsersInDataBase_GetUser_ReturnTheFirstUser() {
 		//Given
 		let persistenceController = PersistenceController(inMemory: true)

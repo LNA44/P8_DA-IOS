@@ -17,7 +17,7 @@ enum MockScenarioExerciseRepository {
 struct ExerciseRepositoryMock: ExerciseRepositoryProtocol {
 	let scenario: MockScenarioExerciseRepository
 	
-	func addExercise(category: String, duration: Int, intensity: Int, startDate: Date) throws {
+	func addExercise(category: String, duration: Int, intensity: Int, startTime: Date) throws {
 		switch scenario {
 		case .success:
 			// Simule un ajout réussi, ne lève pas d’erreur

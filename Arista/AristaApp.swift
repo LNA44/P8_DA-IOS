@@ -9,18 +9,14 @@ import SwiftUI
 
 @main
 struct AristaApp: App {
-	//let persistenceController = PersistenceController.shared
-	let persistenceController: PersistenceController
-
-		init() {
-			self.persistenceController = PersistenceController()
-		}
+	
+	let persistenceController: PersistenceController = PersistenceController()
 
     var body: some Scene {
         WindowGroup {
             TabView {
                 UserDataView(viewModel: UserDataViewModel(context: persistenceController.container.viewContext))
-                    .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                    .environment(\.managedObjectContext, persistenceController.container.viewContext) //passe un context a la vue et ses sous-vues
                     .tabItem {
                         Label("Utilisateur", systemImage: "person")
                     }

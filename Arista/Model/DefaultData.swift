@@ -60,7 +60,6 @@ struct DefaultData {
 				sleep5.startDate = Date(timeIntervalSinceNow: timeIntervalForADay)
 				sleep5.user = initialUser
 			}
-			
 			try? viewContext.save()
 		}
 	}

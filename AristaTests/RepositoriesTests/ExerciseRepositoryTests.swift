@@ -22,7 +22,7 @@ final class ExerciseRepositoryTests: XCTestCase {
 		try! context.save()
 	}
 
-	private func addExercise(context: NSManagedObjectContext, category: String, duration: Int, intensity: Int, startDate: Date, userFirstName: String, userLastName: String) {
+	private func addExercise(context: NSManagedObjectContext, category: String, duration: Int, intensity: Int, startTime: Date, userFirstName: String, userLastName: String) {
 		let newUser = User(context: context)
 		newUser.firstName = userFirstName
 		newUser.lastName = userLastName
@@ -32,7 +32,7 @@ final class ExerciseRepositoryTests: XCTestCase {
 		newExercise.category = category
 		newExercise.duration = Int64(duration)
 		newExercise.intensity = Int64(intensity)
-		newExercise.startDate = startDate
+		newExercise.startTime = startTime
 		newExercise.user = newUser
 		try! context.save()
 	}
@@ -48,14 +48,14 @@ final class ExerciseRepositoryTests: XCTestCase {
 		//Then
 		XCTAssert(exercises.isEmpty == true)
 	}
-	//A REVOIR
+
 	func test_WhenAddidOneExerciseInDataBase_GetExercise_ReturnAListContainingTheExercise() {
 		//Given
 		let persistenceController = PersistenceController(inMemory: true)
 		emptyEntities(context: persistenceController.container.viewContext)
 		let date = Date()
 		
-		addExercise(context: persistenceController.container.viewContext, category: "Football", duration: 10, intensity: 5, startDate: date, userFirstName: "Eric", userLastName: "Marcus")
+		addExercise(context: persistenceController.container.viewContext, category: "Football", duration: 10, intensity: 5, startTime: date, userFirstName: "Eric", userLastName: "Marcus")
 		
 		let data = ExerciseRepository(viewContext: persistenceController.container.viewContext)
 		//When
@@ -65,9 +65,9 @@ final class ExerciseRepositoryTests: XCTestCase {
 		XCTAssert(exercises.first?.category == "Football")
 		XCTAssert(exercises.first?.duration == 10)
 		XCTAssert(exercises.first?.intensity == 5)
-		XCTAssert(exercises.first?.startDate == date)
+		XCTAssert(exercises.first?.startTime == date)
 	}
-	//A REVOIR
+
 	func test_WhenAddingMultipleExercisesInDataBase_GetExercise_ReturnAListContanaingTheExercisesInTheRightOrder() {
 		//Given
 		let persistenceController = PersistenceController(inMemory: true)
@@ -76,9 +76,9 @@ final class ExerciseRepositoryTests: XCTestCase {
 		let date1 = Date()
 		let date2 = Date(timeIntervalSinceNow: -(60*60*24))
 		let date3 = Date(timeIntervalSinceNow: -(60*60*24*2))
-		addExercise(context: persistenceController.container.viewContext, category: "Football", duration: 10, intensity: 5, startDate: date1, userFirstName: "Erica", userLastName: "Marcusi")
-		addExercise(context: persistenceController.container.viewContext, category: "Running", duration: 120, intensity: 1, startDate: date3, userFirstName: "Erice", userLastName: "Marceau")
-		addExercise(context: persistenceController.container.viewContext, category: "Fitness", duration: 30, intensity: 5, startDate: date2, userFirstName: "Frédéric", userLastName: "Marcus")
+		addExercise(context: persistenceController.container.viewContext, category: "Football", duration: 10, intensity: 5, startTime: date1, userFirstName: "Erica", userLastName: "Marcusi")
+		addExercise(context: persistenceController.container.viewContext, category: "Running", duration: 120, intensity: 1, startTime: date3, userFirstName: "Erice", userLastName: "Marceau")
+		addExercise(context: persistenceController.container.viewContext, category: "Fitness", duration: 30, intensity: 5, startTime: date2, userFirstName: "Frédéric", userLastName: "Marcus")
 		
 		let data = ExerciseRepository(viewContext: persistenceController.container.viewContext)
 		//When
@@ -89,7 +89,8 @@ final class ExerciseRepositoryTests: XCTestCase {
 		XCTAssert(exercises[1].category == "Fitness")
 		XCTAssert(exercises[2].category == "Running")
 	}
-	//A REVOIR
+
+	//NEW
 	func testAddExerciseSuccess() throws {
 		//Given
 		let persistenceController = PersistenceController(inMemory: true)
@@ -97,7 +98,7 @@ final class ExerciseRepositoryTests: XCTestCase {
 		let repository = ExerciseRepository(viewContext: persistenceController.container.viewContext)
 		let date = Date()
 		//When
-		try repository.addExercise(category: "Football", duration: 10, intensity: 5, startDate: date)
+		try repository.addExercise(category: "Football", duration: 10, intensity: 5, startTime: date)
 		//Then
 		let fetchRequest = Exercise.fetchRequest()
 		let exercise = try persistenceController.container.viewContext.fetch(fetchRequest)
@@ -105,9 +106,9 @@ final class ExerciseRepositoryTests: XCTestCase {
 		XCTAssertEqual(exercise[0].category, "Football")
 		XCTAssertEqual(exercise[0].duration, 10)
 		XCTAssertEqual(exercise[0].intensity, 5)
-		XCTAssertEqual(exercise[0].startDate, date)
+		XCTAssertEqual(exercise[0].startTime, date)
 	}
-	
+	//NEW
 	func testAddExerciseInvalidCategory() throws {
 		//Given
 		let persistenceController = PersistenceController(inMemory: true)
@@ -116,7 +117,7 @@ final class ExerciseRepositoryTests: XCTestCase {
 		let date = Date()
 		//When & Then
 		do {
-			try repository.addExercise(category: "Swimming", duration: 10, intensity: 5, startDate: date)
+			try repository.addExercise(category: "Swimming", duration: 10, intensity: 5, startTime: date)
 			XCTFail("Expected to throw an error but it didn't")
 		} catch let error as HandleErrors.ExerciseError{
 			XCTAssertEqual(error,.invalidCategory)
@@ -127,7 +128,7 @@ final class ExerciseRepositoryTests: XCTestCase {
 		let exercise = try persistenceController.container.viewContext.fetch(fetchRequest)
 		XCTAssertTrue(exercise.isEmpty)
 	}
-	
+	//NEW
 	func testAddExerciseInvalidDuration() throws {
 		//Given
 		let persistenceController = PersistenceController(inMemory: true)
@@ -136,7 +137,7 @@ final class ExerciseRepositoryTests: XCTestCase {
 		let date = Date()
 		//When & Then
 		do {
-			try repository.addExercise(category: "Football", duration: 3000, intensity: 5, startDate: date)
+			try repository.addExercise(category: "Football", duration: 3000, intensity: 5, startTime: date)
 			XCTFail("Expected to throw an error but it didn't")
 		} catch let error as HandleErrors.ExerciseError{
 			XCTAssertEqual(error,.invalidDuration)
@@ -147,7 +148,7 @@ final class ExerciseRepositoryTests: XCTestCase {
 		let exercise = try persistenceController.container.viewContext.fetch(fetchRequest)
 		XCTAssertTrue(exercise.isEmpty)
 	}
-	
+	//NEW
 	func testAddExerciseInvalidIntensity() throws {
 		//Given
 		let persistenceController = PersistenceController(inMemory: true)
@@ -156,7 +157,7 @@ final class ExerciseRepositoryTests: XCTestCase {
 		let date = Date()
 		//When & Then
 		do {
-			try repository.addExercise(category: "Football", duration: 10, intensity: 11, startDate: date)
+			try repository.addExercise(category: "Football", duration: 10, intensity: 11, startTime: date)
 			XCTFail("Expected to throw an error but it didn't")
 		} catch let error as HandleErrors.ExerciseError{
 			XCTAssertEqual(error,.invalidIntensity)

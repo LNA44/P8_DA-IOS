@@ -25,7 +25,7 @@ final class ExerciseListViewModelTests: XCTestCase {
 		try! context.save()
 	}
 
-	private func addExercise(context: NSManagedObjectContext, category: String, duration: Int, intensity: Int, startDate: Date, userFirstName: String, userLastName: String) {
+	private func addExercise(context: NSManagedObjectContext, category: String, duration: Int, intensity: Int, startTime: Date, userFirstName: String, userLastName: String) {
 		let newUser = User(context: context)
 		newUser.firstName = userFirstName
 		newUser.lastName = userLastName
@@ -35,7 +35,7 @@ final class ExerciseListViewModelTests: XCTestCase {
 		newExercise.category = category
 		newExercise.duration = Int64(duration)
 		newExercise.intensity = Int64(intensity)
-		newExercise.startDate = startDate
+		newExercise.startTime = startTime
 		newExercise.user = newUser
 		try! context.save()
 	}
@@ -65,13 +65,13 @@ final class ExerciseListViewModelTests: XCTestCase {
 			.store(in : &cancellables) //conserve la souscription à @Published pendant tout le test
 		wait(for: [expectation], timeout: 10) //test attend que expectation.fulfill() soit appelé sous max 10sec
 	}
-	//A REVOIR
+
 	func test_WhenAddingOneExerciseInDatabase_FetchExercise_ReturnAListContainingThisExercise() {
 		//clean manually all data
 		let persistenceController = PersistenceController(inMemory: true)
 		emptyEntities(context: persistenceController.container.viewContext)
 		let date = Date()
-		addExercise(context: persistenceController.container.viewContext, category: "Football", duration:10, intensity: 5, startDate: date, userFirstName: "Eric", userLastName: "Marcus")
+		addExercise(context: persistenceController.container.viewContext, category: "Football", duration:10, intensity: 5, startTime: date, userFirstName: "Eric", userLastName: "Marcus")
 		
 		let viewModel = ExerciseListViewModel(context: persistenceController.container.viewContext)
 		let expectation = XCTestExpectation(description: "Fetch empty list of exercise")
@@ -82,13 +82,13 @@ final class ExerciseListViewModelTests: XCTestCase {
 				XCTAssert(exercises.first?.category == "Football")
 				XCTAssert(exercises.first?.duration == 10)
 				XCTAssert(exercises.first?.intensity == 5)
-				XCTAssert(exercises.first?.startDate == date)
+				XCTAssert(exercises.first?.startTime == date)
 				expectation.fulfill()
 			}
 			.store(in: &cancellables)
 			wait(for: [expectation], timeout: 10)
 	}
-	//A REVOIR
+
 	func test_WhenAddingMultipleExerciseInDatabase_FetchExercise_ReturnAListContainingTheExerciseInTheRightOrder() {
 		// clean manually all data
 		let persistenceController = PersistenceController(inMemory: true)
@@ -97,9 +97,9 @@ final class ExerciseListViewModelTests: XCTestCase {
 		let date2 = Date(timeIntervalSinceNow: -(60*60*24))
 		let date3 = Date(timeIntervalSinceNow: -(60*60*24*2))
 
-		addExercise(context: persistenceController.container.viewContext, category: "Football", duration: 10, intensity: 5,startDate: date1, userFirstName: "Ericn", userLastName: "Marcusi")
-		addExercise(context: persistenceController.container.viewContext, category: "Running", duration: 120, intensity: 1, startDate: date3, userFirstName: "Ericb", userLastName: "Marceau")
-		addExercise(context: persistenceController.container.viewContext, category: "Fitness", duration: 30, intensity: 5, startDate: date2, userFirstName: "Frédericp", userLastName: "Marcus")
+		addExercise(context: persistenceController.container.viewContext, category: "Football", duration: 10, intensity: 5,startTime: date1, userFirstName: "Ericn", userLastName: "Marcusi")
+		addExercise(context: persistenceController.container.viewContext, category: "Running", duration: 120, intensity: 1, startTime: date3, userFirstName: "Ericb", userLastName: "Marceau")
+		addExercise(context: persistenceController.container.viewContext, category: "Fitness", duration: 30, intensity: 5, startTime: date2, userFirstName: "Frédericp", userLastName: "Marcus")
 		
 		let viewModel = ExerciseListViewModel(context: persistenceController.container.viewContext)
 		let expectation = XCTestExpectation(description: "fetch empty list of exercise")

@@ -131,7 +131,7 @@ final class AddExerciseViewModelTests: XCTestCase {
 		wait(for: [expectation1, expectation2], timeout: 10) //test attend que expectation.fulfill() soit appelé sous max 10sec
 	}
 	
-	func testConvertStringToDateSuccess_NotNil() {
+	/*func testConvertStringToDateSuccess_NotNil() {
 		//Given
 		let persistenceController = PersistenceController(inMemory: true)
 		//emptyEntities(context: persistenceController.container.viewContext)
@@ -153,28 +153,68 @@ final class AddExerciseViewModelTests: XCTestCase {
 		let result = viewModel.convertStringToDate(dateString)
 		//Then
 		XCTAssertNil(result)
-	}
+	}*/
 	
-	func testStartTimeStringUpdatesStartTime() {
+	func testConvertStringToStartDate_validTime_returnsCorrectDate() {
+		//Given
 		let persistenceController = PersistenceController(inMemory: true)
 		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext)
+		//When
+		let result = viewModel.convertStringToStartDate("08:30")
+		//Then
+		XCTAssertNotNil(result)
 
-		viewModel.startTimeString = "14:30"
-		// Puisque la conversion devrait réussir, startTime devrait changer
-		let calendar = Calendar.current
-		let components = calendar.dateComponents([.hour, .minute], from: viewModel.startTime)
-		XCTAssertEqual(components.hour, 14)
+		let components = Calendar.current.dateComponents([.hour, .minute], from: result!)
+		XCTAssertEqual(components.hour, 8)
 		XCTAssertEqual(components.minute, 30)
 	}
 
-	func testStartTimeStringInvalidDateDoesNotUpdateStartTime() {
+	func testConvertStringToStartDate_invalidTimeFormat_returnsNil() {
+		//Given
 		let persistenceController = PersistenceController(inMemory: true)
 		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext)
-
-		let initialDate = viewModel.startTime
-		viewModel.startTimeString = "99:99" // invalide, didSet ne modifie pas startTime
-		XCTAssertEqual(viewModel.startTime, initialDate)
+		//When
+		let result = viewModel.convertStringToStartDate("not a time")
+		//Then
+		XCTAssertNil(result)
 	}
+	
+	func testConvertStringToStartDate_invalidTime_returnsNil() {
+		//Given
+		let persistenceController = PersistenceController(inMemory: true)
+		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext)
+		//When
+		let result = viewModel.convertStringToStartDate("25:00")
+		//Then
+		XCTAssertNil(result)
+	}
+
+	func testStartTimeString_valid_setsCorrectStartTime() {
+		//Given
+		let persistenceController = PersistenceController(inMemory: true)
+		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext)
+		//When
+		viewModel.startTimeString = "14:00"
+		let components = Calendar.current.dateComponents([.hour, .minute], from: viewModel.startTime)
+		//Then
+		XCTAssertEqual(components.hour, 14)
+		XCTAssertEqual(components.minute, 0)
+	}
+
+	func testStartTimeString_invalid_setsDefaultStartTime() {
+		//Given
+		let persistenceController = PersistenceController(inMemory: true)
+		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext)
+		//When
+		viewModel.startTimeString = "bad input"
+		let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: viewModel.startTime)
+		XCTAssertEqual(components.year, 2000)
+		XCTAssertEqual(components.month, 1)
+		XCTAssertEqual(components.day, 1)
+		XCTAssertEqual(components.hour, 0)
+		XCTAssertEqual(components.minute, 0)
+	}
+	
 
 	func testDurationStringUpdatesDuration() {
 		let persistenceController = PersistenceController(inMemory: true)
