@@ -24,6 +24,7 @@ final class UserDataViewModelTests: XCTestCase {
 	}
 	
 	private func addUser(context: NSManagedObjectContext, firstName: String, lastName: String) {
+		print("addUser appelée")
 		let newUser = User(context: context)
 		newUser.firstName = firstName
 		newUser.lastName = lastName
@@ -33,9 +34,11 @@ final class UserDataViewModelTests: XCTestCase {
 	func test_WhenNoUserIsInDatabase_FetchUser_returnEmptyFirstNameAndLastName() {
 		//Clean manually all data
 		let persistenceController = PersistenceController(inMemory: true)
-		emptyEntities(context: persistenceController.container.viewContext)
+		let context = persistenceController.container.viewContext
+		emptyEntities(context: context)
 		
-		let viewModel = UserDataViewModel(context: persistenceController.container.viewContext)
+		let repository = UserRepository(viewContext: context)
+		let viewModel = UserDataViewModel(context: context, repository: repository)
 		
 		let expectation1 = XCTestExpectation(description: "Fetch empty firstName")
 		let expectation2 = XCTestExpectation(description: "Fetch empty lastName")
@@ -60,33 +63,50 @@ final class UserDataViewModelTests: XCTestCase {
 	func test_WhenOneUserIsInDatabase_FetchUser_returnFirstNameAndLastName() {
 		//Clean manually all data
 		let persistenceController = PersistenceController(inMemory: true)
-		emptyEntities(context: persistenceController.container.viewContext)
+		let context = persistenceController.container.viewContext
+		emptyEntities(context: context)
 		
 		addUser(context: persistenceController.container.viewContext, firstName: "Eric", lastName: "Marceau")
-		
-		let viewModel = UserDataViewModel(context: persistenceController.container.viewContext)
+		let repository = UserRepository(viewContext: context)
+		let viewModel = UserDataViewModel(context: context, repository: repository)
 		
 		let expectation1 = XCTestExpectation(description: "Fetch firstName")
 		let expectation2 = XCTestExpectation(description: "Fetch lastName")
 		
 		viewModel.$firstName //observation du @Published firstName via combine
-			.dropFirst()
 			.sink { firstName in //quand valeur de firstName change(même s'il est vide alors le bloc est exécuté)
 				print("Received firstName: \(firstName)")
-				XCTAssertEqual(firstName, "")
+				XCTAssertEqual(firstName, "Eric")
 				expectation1.fulfill()
 			}
 			.store(in : &cancellables) //conserve la souscription à @Published pendant tout le test
 		
 		viewModel.$lastName //observation du @Published lastName via combine
-			.dropFirst() 
 			.sink { lastName in //quand valeur de lastName change(même s'il est vide alors le bloc est exécuté)
-				XCTAssertEqual(lastName, "")
+				XCTAssertEqual(lastName, "Marceau")
 				expectation2.fulfill()
 			}
 		
 			.store(in : &cancellables) //conserve la souscription à @Published pendant tout le test
-		
 		wait(for: [expectation1,expectation2], timeout: 10) //test attend que les deux expectation.fulfill() soient appelés sous max 10sec
+	}
+	
+	func test_ErrorThrowedByFetchUser_returnErrorMessage() {
+		//Clean manually all data
+		let persistenceController = PersistenceController(inMemory: true)
+		emptyEntities(context: persistenceController.container.viewContext)
+		
+		let viewModel = UserDataViewModel(context: persistenceController.container.viewContext, repository: UserRepositoryMock())
+		
+		let expectation = XCTestExpectation(description: "fetchUser catch error")
+		viewModel.$errorMessage
+			.dropFirst()
+			.sink { errorMessage in
+				XCTAssertEqual(errorMessage, "Unknown error happened : Erreur simulée")
+				XCTAssertTrue(viewModel.showAlert)
+				expectation.fulfill()
+			}
+		
+			.store(in : &cancellables) //conserve la souscription à @Published pendant tout le test
 	}
 }

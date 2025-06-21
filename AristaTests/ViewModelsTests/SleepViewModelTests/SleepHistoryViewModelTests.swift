@@ -20,6 +20,11 @@ final class SleepHistoryViewModelTests: XCTestCase {
 		for user in objects {
 			context.delete(user)
 		}
+		let sleepFetchRequest = Sleep.fetchRequest()
+		let sleeps = try! context.fetch(sleepFetchRequest)
+		for sleep in sleeps {
+			context.delete(sleep)
+		}
 		try! context.save()
 	}
 	
@@ -40,9 +45,10 @@ final class SleepHistoryViewModelTests: XCTestCase {
 	func test_WhenNoSleepSessionIsInDatabase_FetchSleepSessions_returnEmptySleepSessions() {
 		//Clean manually all data
 		let persistenceController = PersistenceController(inMemory: true)
-		emptyEntities(context: persistenceController.container.viewContext)
-		
-		let viewModel = SleepHistoryViewModel(context: persistenceController.container.viewContext)
+		let context = persistenceController.container.viewContext
+		emptyEntities(context: context)
+		let repository = SleepRepository(viewContext: context)
+		let viewModel = SleepHistoryViewModel(context: context, repository: repository)
 		
 		let expectation = XCTestExpectation(description: "Fetch empty sleep session")
 		
@@ -58,17 +64,19 @@ final class SleepHistoryViewModelTests: XCTestCase {
 	func test_WhenAddingOneSleepSessionInDatabase_FetchSleepSessions_ReturnAListContainingThisSleepSession() {
 		//Clean manually all data
 		let persistenceController = PersistenceController(inMemory: true)
-		emptyEntities(context: persistenceController.container.viewContext)
+		let context = persistenceController.container.viewContext
+		emptyEntities(context: context)
 		
-		let viewModel = SleepHistoryViewModel(context: persistenceController.container.viewContext)
 		let date = Date()
+				
+		addSleepSession(context: context, duration: 25, quality: 7, startDate: date, userFirstName: "Eric", userLastName: "Marceau")
+		let repository = SleepRepository(viewContext: context)
+		let viewModel = SleepHistoryViewModel(context: context, repository: repository)
 		
-		addSleepSession(context: persistenceController.container.viewContext, duration: 25, quality: 7, startDate: date, userFirstName: "Eric", userLastName: "Marceau")
 		
 		let expectation = XCTestExpectation(description: "Fetch sleep session")
 		
 		viewModel.$sleepSessions //observation du @Published firstName via combine
-			.dropFirst() // ignore la valeur initiale vide lors de l'appel à fetchSleepSessions() dans l'init du VM
 			.sink { session in //quand valeur de firstName change(même s'il est vide alors le bloc est exécuté)
 				print("sleepSessions changed: \(session)")
 				XCTAssertFalse(session.isEmpty)
@@ -78,7 +86,25 @@ final class SleepHistoryViewModelTests: XCTestCase {
 				expectation.fulfill()
 			}
 			.store(in : &cancellables) //conserve la souscription à @Published pendant tout le test
-		viewModel.fetchSleepSessions()
 		wait(for: [expectation], timeout: 10) //test attend que les deux expectation.fulfill() soient appelés sous max 10sec
+	}
+	
+	func test_ErrorThrowedByFetchSleepSessions_returnErrorMessage() {
+		//Clean manually all data
+		let persistenceController = PersistenceController(inMemory: true)
+		emptyEntities(context: persistenceController.container.viewContext)
+		
+		let viewModel = SleepHistoryViewModel(context: persistenceController.container.viewContext, repository: SleepRepositoryMock())
+		
+		let expectation = XCTestExpectation(description: "fetchSleepSessions catch error")
+
+		viewModel.$errorMessage
+			.dropFirst()
+			.sink { errorMessage in //quand valeur de firstName change(même s'il est vide alors le bloc est exécuté)
+				XCTAssertEqual(errorMessage, "Unknown error happened : Erreur simulée")
+				XCTAssertTrue(viewModel.showAlert)
+				expectation.fulfill()
+			}
+			.store(in : &cancellables) //conserve la souscription à @Published pendant tout le test
 	}
 }

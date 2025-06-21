@@ -8,7 +8,11 @@
 import Foundation
 import CoreData
 
-struct SleepRepository {
+protocol SleepRepositoryProtocol {
+	func getSleepSessions() throws -> [Sleep]
+}
+
+struct SleepRepository: SleepRepositoryProtocol {
 	//MARK: -Properties
 	let viewContext: NSManagedObjectContext
 	

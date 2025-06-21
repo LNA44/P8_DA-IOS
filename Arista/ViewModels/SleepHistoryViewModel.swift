@@ -16,19 +16,19 @@ class SleepHistoryViewModel: ObservableObject {
     
 	//MARK: -Private properties
     private var viewContext: NSManagedObjectContext
+	private var repository: SleepRepositoryProtocol!
     
 	//MARK: -Initialization
-    init(context: NSManagedObjectContext) {
+	init(context: NSManagedObjectContext, repository: SleepRepositoryProtocol = SleepRepository(viewContext: PersistenceController.shared.container.viewContext)) {
         self.viewContext = context
+		self.repository = repository
         fetchSleepSessions()
     }
     
 	//MARK: -Methods
-	func fetchSleepSessions() {
+	private func fetchSleepSessions() {
 		do {
-			print("fetchSleepSessions appelée")
-			let data = SleepRepository(viewContext: viewContext)
-			sleepSessions = try data.getSleepSessions()
+			sleepSessions = try repository.getSleepSessions()
 		} catch {
 			errorMessage = "Unknown error happened : \(error.localizedDescription)"
 			showAlert = true

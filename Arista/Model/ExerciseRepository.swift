@@ -9,6 +9,7 @@ import Foundation
 import CoreData
 
 protocol ExerciseRepositoryProtocol { //permet de le mocker
+	func getExercise() throws -> [Exercise]
 	func addExercise(category: String, duration: Int, intensity: Int, startTime: Date) throws
 }
 

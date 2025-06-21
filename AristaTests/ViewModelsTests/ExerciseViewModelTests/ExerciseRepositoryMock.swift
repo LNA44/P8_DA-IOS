@@ -17,6 +17,10 @@ enum MockScenarioExerciseRepository {
 struct ExerciseRepositoryMock: ExerciseRepositoryProtocol {
 	let scenario: MockScenarioExerciseRepository
 	
+	func getExercise() throws -> [Exercise] {
+		throw NSError(domain: "TestError", code: 999, userInfo: [NSLocalizedDescriptionKey: "Erreur simulée"])
+	}
+	
 	func addExercise(category: String, duration: Int, intensity: Int, startTime: Date) throws {
 		switch scenario {
 		case .success:

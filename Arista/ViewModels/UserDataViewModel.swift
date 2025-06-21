@@ -15,13 +15,15 @@ class UserDataViewModel: ObservableObject {
     @Published var lastName: String = ""
 	@Published var errorMessage: String?
 	@Published var showAlert: Bool = false
+	var viewContext: NSManagedObjectContext
 
 	//MARK: -Private properties
-    private var viewContext: NSManagedObjectContext
 	private var cancellables = Set<AnyCancellable>()
+	private var repository: UserRepositoryProtocol!
 
 	//MARK: -Initialization
-    init(context: NSManagedObjectContext) {
+	init(context: NSManagedObjectContext, repository: UserRepositoryProtocol = UserRepository(viewContext: PersistenceController.shared.container.viewContext)) {
+		self.repository = repository
         self.viewContext = context
 		//Notification 1 : erreur d'enregistrement des données en mémoire lors des tests
 		NotificationCenter.default.publisher(for: .persistenceSaveError) // evenement créé à chaque notif
@@ -45,27 +47,18 @@ class UserDataViewModel: ObservableObject {
     }
 
 	//MARK: -Methods
-    private func fetchUserData() {
+	private func fetchUserData() {
 		do {
-			guard let user = try UserRepository(viewContext: viewContext).getUser() else {
-				errorMessage = "No user found" // cas ou getUser() renvoie nil car aucun User
-				showAlert = true
-				firstName = ""
-				lastName = ""
+			guard let user = try repository.getUser() else {
+				handleError(message: "No user found")
 				return
 			}
 			guard let unwrappedFirstName = user.firstName else {
-				errorMessage = "User first name is missing"
-				showAlert = true
-				firstName = ""
-				lastName = ""
+				handleError(message: "User firstName is missing")
 				return
 			}
 			guard let unwrappedLastName = user.lastName else {
-				errorMessage = "User last name is missing"
-				showAlert = true
-				firstName = ""
-				lastName = ""
+				handleError(message: "User lastName is missing")
 				return
 			}
 			firstName = unwrappedFirstName
@@ -75,4 +68,11 @@ class UserDataViewModel: ObservableObject {
 			showAlert = true
 		}
     }
+	
+	private func handleError(message: String) {
+		errorMessage = message
+		showAlert = true
+		firstName = ""
+		lastName = ""
+	}
 }

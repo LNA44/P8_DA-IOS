@@ -42,16 +42,20 @@ class AddExerciseViewModel: ObservableObject {
 	@Published var errorMessage: String?
 	@Published var showAlert: Bool = false
 	var viewContext: NSManagedObjectContext
-	let repository: ExerciseRepositoryProtocol
+	//let repository: ExerciseRepositoryProtocol
+	
+	//MARK: -Private properties
+	private var repository: ExerciseRepositoryProtocol!
 
 	//MARK: -Initialization
-	init(context: NSManagedObjectContext, repository: ExerciseRepositoryProtocol? = nil) {
+	init(context: NSManagedObjectContext, repository: ExerciseRepositoryProtocol = ExerciseRepository(viewContext: PersistenceController.shared.container.viewContext)) {
 		self.viewContext = context
-		if let repo = repository { //car context doit etre initialisé avant repository
+		/*if let repo = repository { //car context doit etre initialisé avant repository
 			self.repository = repo
 		} else { //si aucun repo passé dans l'init
 			self.repository = ExerciseRepository(viewContext: context)
-		}
+		}*/
+		self.repository = repository
 	}
 	
 	//MARK: -Methods

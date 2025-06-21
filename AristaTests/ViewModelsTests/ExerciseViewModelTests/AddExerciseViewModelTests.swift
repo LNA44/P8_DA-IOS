@@ -26,14 +26,6 @@ final class AddExerciseViewModelTests: XCTestCase {
 		try! context.save()
 	}
 	
-	override func setUpWithError() throws {
-		// Put setup code here. This method is called before the invocation of each test method in the class.
-	}
-	
-	override func tearDownWithError() throws {
-		// Put setup code here. This method is called before the invocation of each test method in the class.
-	}
-	
 	func testAddExerciseSuccess() {
 		//Clean manually all data
 		let persistenceController = PersistenceController(inMemory: true)
@@ -130,30 +122,6 @@ final class AddExerciseViewModelTests: XCTestCase {
 		
 		wait(for: [expectation1, expectation2], timeout: 10) //test attend que expectation.fulfill() soit appelé sous max 10sec
 	}
-	
-	/*func testConvertStringToDateSuccess_NotNil() {
-		//Given
-		let persistenceController = PersistenceController(inMemory: true)
-		//emptyEntities(context: persistenceController.container.viewContext)
-		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext)
-		let dateString = "14:30"
-		//When
-		let result = viewModel.convertStringToDate(dateString)
-		//Then
-		XCTAssertNotNil(result)
-	}
-	
-	func testConvertStringToDateSuccess_Nil() {
-		//Given
-		let persistenceController = PersistenceController(inMemory: true)
-		//emptyEntities(context: persistenceController.container.viewContext)
-		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext)
-		let dateString = "25:99"
-		//When
-		let result = viewModel.convertStringToDate(dateString)
-		//Then
-		XCTAssertNil(result)
-	}*/
 	
 	func testConvertStringToStartDate_validTime_returnsCorrectDate() {
 		//Given

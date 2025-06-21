@@ -14,19 +14,21 @@ class ExerciseListViewModel: ObservableObject {
 	@Published var errorMessage: String?
 	@Published var showAlert: Bool = false
 	var viewContext: NSManagedObjectContext
+	
+	//MARK: -Private properties
+	private var repository: ExerciseRepositoryProtocol!
 
 	//MARK: -Initialization
-    init(context: NSManagedObjectContext) {
+	init(context: NSManagedObjectContext, repository: ExerciseRepositoryProtocol = ExerciseRepository(viewContext: PersistenceController.shared.container.viewContext)) {
+		self.repository = repository
         self.viewContext = context
         fetchExercises() //prépare les données avant la création de la vue
     }
 
 	//MARK: -Methods
-    private func fetchExercises() {
+	private func fetchExercises() {
 		do {
-			print("fetchExercises appelée")
-			let data = ExerciseRepository(viewContext: viewContext)
-			exercises = try data.getExercise()
+			exercises = try repository.getExercise()
 		} catch {
 			errorMessage = "Unknown error happened : \(error.localizedDescription)"
 			showAlert = true
