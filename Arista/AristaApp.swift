@@ -10,7 +10,7 @@ import SwiftUI
 @main
 struct AristaApp: App {
 	
-	let persistenceController: PersistenceController = PersistenceController()
+	let persistenceController = PersistenceController.shared
 
     var body: some Scene {
         WindowGroup {

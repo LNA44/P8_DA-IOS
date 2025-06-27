@@ -24,8 +24,10 @@ struct ExerciseListView: View {
 						if let startTime = exercise.startTime {
 							Text(startTime.formatted())
 								.font(.subheadline)
+							
 						} else {
 							Text("Pas de date")
+								.font(.subheadline)
 						}
                     }
                     Spacer()
