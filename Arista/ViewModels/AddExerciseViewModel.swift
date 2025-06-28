@@ -10,7 +10,7 @@ import CoreData
 
 class AddExerciseViewModel: ObservableObject {
 	//MARK: -Public properties
-    @Published var category: String = ""
+	@Published var category: String = ""
 	@Published var startTimeString: String = "" { // car vient d'un textField
 		didSet {
 			if let combinedDate = convertStringToStartDate(startTimeString) {
@@ -29,7 +29,7 @@ class AddExerciseViewModel: ObservableObject {
 			duration = int
 		}
 	}
-    @Published var duration: Int = 0
+	@Published var duration: Int = 0
 	@Published var intensityString: String = "" {
 		didSet {
 			guard let int = Int(intensityString) else {
@@ -38,7 +38,7 @@ class AddExerciseViewModel: ObservableObject {
 			intensity = int
 		}
 	}
-    @Published var intensity: Int = 0
+	@Published var intensity: Int = 0
 	@Published var errorMessage: String?
 	@Published var showAlert: Bool = false
 	var viewContext: NSManagedObjectContext
@@ -46,16 +46,15 @@ class AddExerciseViewModel: ObservableObject {
 	
 	//MARK: -Private properties
 	private var repository: ExerciseRepositoryProtocol!
-
+	
 	//MARK: -Initialization
-	init(context: NSManagedObjectContext, repository: ExerciseRepositoryProtocol = ExerciseRepository(viewContext: PersistenceController.shared.container.viewContext)) {
+	init(context: NSManagedObjectContext, repository: ExerciseRepositoryProtocol? = nil) {
 		self.viewContext = context
-		/*if let repo = repository { //car context doit etre initialisé avant repository
+		if let repo = repository {
 			self.repository = repo
 		} else { //si aucun repo passé dans l'init
 			self.repository = ExerciseRepository(viewContext: context)
-		}*/
-		self.repository = repository
+		}
 	}
 	
 	//MARK: -Methods

@@ -10,21 +10,25 @@ import CoreData
 
 class SleepHistoryViewModel: ObservableObject {
 	//MARK: -Public properties
-    @Published var sleepSessions = [Sleep]()
+	@Published var sleepSessions = [Sleep]()
 	@Published var errorMessage: String?
 	@Published var showAlert: Bool = false
-    
+	
 	//MARK: -Private properties
-    private var viewContext: NSManagedObjectContext
+	private var viewContext: NSManagedObjectContext
 	private var repository: SleepRepositoryProtocol!
-    
+	
 	//MARK: -Initialization
-	init(context: NSManagedObjectContext, repository: SleepRepositoryProtocol = SleepRepository(viewContext: PersistenceController.shared.container.viewContext)) {
-        self.viewContext = context
-		self.repository = repository
-        fetchSleepSessions()
-    }
-    
+	init(context: NSManagedObjectContext, repository: SleepRepositoryProtocol? = nil) { 
+		self.viewContext = context
+		if let repo = repository {
+			self.repository = repo
+		} else { //si aucun repo passé dans l'init
+			self.repository = SleepRepository(viewContext: context)
+		}
+		fetchSleepSessions()
+	}
+	
 	//MARK: -Methods
 	private func fetchSleepSessions() {
 		do {
@@ -33,5 +37,5 @@ class SleepHistoryViewModel: ObservableObject {
 			errorMessage = "Unknown error happened : \(error.localizedDescription)"
 			showAlert = true
 		}
-    }
+	}
 }

@@ -66,7 +66,7 @@ final class UserDataViewModelTests: XCTestCase {
 		let context = persistenceController.container.viewContext
 		emptyEntities(context: context)
 		
-		addUser(context: persistenceController.container.viewContext, firstName: "Eric", lastName: "Marceau")
+		addUser(context: context, firstName: "Eric", lastName: "Marceau")
 		let repository = UserRepository(viewContext: context)
 		let viewModel = UserDataViewModel(context: context, repository: repository)
 		

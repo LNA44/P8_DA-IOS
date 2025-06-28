@@ -10,21 +10,25 @@ import CoreData
 
 class ExerciseListViewModel: ObservableObject {
 	//MARK: -Public properties
-    @Published var exercises = [Exercise]() //tableau vide
+	@Published var exercises = [Exercise]() //tableau vide
 	@Published var errorMessage: String?
 	@Published var showAlert: Bool = false
 	var viewContext: NSManagedObjectContext
 	
 	//MARK: -Private properties
 	private var repository: ExerciseRepositoryProtocol!
-
+	
 	//MARK: -Initialization
-	init(context: NSManagedObjectContext, repository: ExerciseRepositoryProtocol = ExerciseRepository(viewContext: PersistenceController.shared.container.viewContext)) {
-		self.repository = repository
-        self.viewContext = context
-        fetchExercises() //prépare les données avant la création de la vue
-    }
-
+	init(context: NSManagedObjectContext, repository: ExerciseRepositoryProtocol? = nil) {
+		self.viewContext = context
+		if let repo = repository {
+			self.repository = repo
+		} else {
+			self.repository = ExerciseRepository(viewContext: context)
+		}
+		fetchExercises() //prépare les données avant la création de la vue
+	}
+	
 	//MARK: -Methods
 	private func fetchExercises() {
 		do {
@@ -33,7 +37,7 @@ class ExerciseListViewModel: ObservableObject {
 			errorMessage = "Unknown error happened : \(error.localizedDescription)"
 			showAlert = true
 		}
-    }
+	}
 	
 	func reload() {
 		fetchExercises()

@@ -11,20 +11,24 @@ import Combine
 
 class UserDataViewModel: ObservableObject {
 	//MARK: -Public properties
-    @Published var firstName: String = ""
-    @Published var lastName: String = ""
+	@Published var firstName: String = ""
+	@Published var lastName: String = ""
 	@Published var errorMessage: String?
 	@Published var showAlert: Bool = false
 	var viewContext: NSManagedObjectContext
-
+	
 	//MARK: -Private properties
 	private var cancellables = Set<AnyCancellable>()
 	private var repository: UserRepositoryProtocol!
-
+	
 	//MARK: -Initialization
-	init(context: NSManagedObjectContext, repository: UserRepositoryProtocol = UserRepository(viewContext: PersistenceController.shared.container.viewContext)) {
-		self.repository = repository
-        self.viewContext = context
+	init(context: NSManagedObjectContext, repository: UserRepositoryProtocol? = nil) { 
+		self.viewContext = context
+		if let repo = repository {
+			self.repository = repo
+		} else {
+			self.repository = UserRepository(viewContext: context)
+		}
 		//Notification 1 : erreur d'enregistrement des données en mémoire lors des tests
 		NotificationCenter.default.publisher(for: .persistenceSaveError) // evenement créé à chaque notif
 			.sink { [weak self] _ in //recoit valeurs du publisher
@@ -43,9 +47,9 @@ class UserDataViewModel: ObservableObject {
 				}
 			}
 			.store(in: &cancellables)
-        fetchUserData()
-    }
-
+		fetchUserData()
+	}
+	
 	//MARK: -Methods
 	private func fetchUserData() {
 		do {
@@ -67,7 +71,7 @@ class UserDataViewModel: ObservableObject {
 			errorMessage = "Unknown error happened : \(error.localizedDescription)"
 			showAlert = true
 		}
-    }
+	}
 	
 	private func handleError(message: String) {
 		errorMessage = message

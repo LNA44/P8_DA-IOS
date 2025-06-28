@@ -38,33 +38,33 @@ struct SleepHistoryView: View {
 }
 
 struct QualityIndicator: View {
-    let quality: Int64
-
-    var body: some View {
-        ZStack {
-            Circle()
-                .stroke(qualityColor(Int(quality)), lineWidth: 5)
-                .foregroundColor(qualityColor(Int(quality)))
-                .frame(width: 30, height: 30)
-            Text("\(quality)")
-                .foregroundColor(qualityColor(Int(quality)))
-        }
-    }
-
-    func qualityColor(_ quality: Int) -> Color {
-        switch (10-quality) {
-        case 0...3:
-            return .green
-        case 4...6:
-            return .yellow
-        case 7...10:
-            return .red
-        default:
-            return .gray
-        }
-    }
+	let quality: Int64
+	
+	var body: some View {
+		ZStack {
+			Circle()
+				.stroke(qualityColor(Int(quality)), lineWidth: 5)
+				.foregroundColor(qualityColor(Int(quality)))
+				.frame(width: 30, height: 30)
+			Text("\(quality)")
+				.foregroundColor(qualityColor(Int(quality)))
+		}
+	}
+	
+	func qualityColor(_ quality: Int) -> Color {
+		switch (10-quality) {
+		case 0...3:
+			return .green
+		case 4...6:
+			return .yellow
+		case 7...10:
+			return .red
+		default:
+			return .gray
+		}
+	}
 }
 
 #Preview {
-    SleepHistoryView(viewModel: SleepHistoryViewModel(context: PersistenceController.preview.container.viewContext))
+	SleepHistoryView(viewModel: SleepHistoryViewModel(context: PersistenceController.preview.container.viewContext))
 }
