@@ -10,7 +10,7 @@ import CoreData
 
 class ExerciseListViewModel: ObservableObject {
 	//MARK: -Public properties
-	@Published var exercises = [Exercise]() //tableau vide
+	@Published var exercises = [Exercise]()
 	@Published var errorMessage: String?
 	@Published var showAlert: Bool = false
 	var viewContext: NSManagedObjectContext
@@ -22,11 +22,11 @@ class ExerciseListViewModel: ObservableObject {
 	init(context: NSManagedObjectContext, repository: ExerciseRepositoryProtocol? = nil) {
 		self.viewContext = context
 		if let repo = repository {
-			self.repository = repo
+			self.repository = repo //si repo fourni on l'utilise
 		} else {
-			self.repository = ExerciseRepository(viewContext: context)
+			self.repository = ExerciseRepository(viewContext: context) // si aucun repo fourni on utilise ExerciseRepository
 		}
-		fetchExercises() //prépare les données avant la création de la vue
+		fetchExercises() //prépare les données avant la création de la vue -> améliore réactivité de l'UI
 	}
 	
 	//MARK: -Methods

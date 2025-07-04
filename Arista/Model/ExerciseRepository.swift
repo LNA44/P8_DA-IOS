@@ -33,16 +33,16 @@ struct ExerciseRepository: ExerciseRepositoryProtocol {
 	
 	//MARK: -Methods
 	func getExercise() throws -> [Exercise] {
-		let request = Exercise.fetchRequest()
-		request.sortDescriptors = [NSSortDescriptor(SortDescriptor<Exercise>(\.startTime, order:.reverse))]
-		return try viewContext.fetch(request)
+		let request = Exercise.fetchRequest() //création requete : récupère tous les objets exercise
+		request.sortDescriptors = [NSSortDescriptor(SortDescriptor<Exercise>(\.startTime, order:.reverse))] //du plus récent au plus ancien
+		return try viewContext.fetch(request) //exécute la requete : récupère les données de CoreData
 	}
 	
 	func addExercise(category: String, duration: Int, intensity: Int, startTime: Date) throws {
 		guard isValidCategory(category) else {
 			throw HandleErrors.ExerciseError.invalidCategory
 		}
-		guard (0...1440).contains(duration) else {
+		guard (0...1440).contains(duration) else { // entre 0 et 24h
 			throw HandleErrors.ExerciseError.invalidDuration
 		}
 		guard (0...10).contains(intensity) else {

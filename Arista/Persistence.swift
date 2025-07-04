@@ -15,22 +15,14 @@ struct PersistenceController {
 	static var preview: PersistenceController = {
 		let result = PersistenceController(inMemory: true) //crée une instance de PersistenceController avec un store Core Data en mémoire, base temporaire avec données effacées dès la fin du test
 		let viewContext = result.container.viewContext
-		
-		do {
-			try viewContext.save()
-		} catch {
-			let nsError = error as NSError
-			PersistenceController.lastErrorMessage = "Erreur Core Data lors de la sauvegarde: \(nsError.localizedDescription)"
-			NotificationCenter.default.post(name: .persistenceSaveError, object: nil, userInfo: ["error": nsError])
-		}
+
 		return result
 	}()
 	
 	let container: NSPersistentContainer
 	
 	init(inMemory: Bool = false) {
-		print("PersistenceController init - inMemory: \(inMemory)")
-		container = NSPersistentContainer(name: "Arista") //charge le modèle Arista
+		container = NSPersistentContainer(name: "Arista")
 		if inMemory {
 			container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null") //données vont dans un faux fichier donc jamais réellement écrites
 		}
@@ -49,7 +41,6 @@ struct PersistenceController {
 				 */
 			}
 		})
-		container.viewContext.automaticallyMergesChangesFromParent = true //viewContext principal recoit automatiquement les changements d'autres contextes en arrière plan et se maj seul
 		if inMemory == false {
 			try! DefaultData(viewContext: container.viewContext).apply()
 		}
