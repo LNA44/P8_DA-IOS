@@ -11,7 +11,7 @@ import Combine
 @testable import Arista
 
 final class ExerciseListViewModelTests: XCTestCase {
-	var cancellables = Set<AnyCancellable>()
+	var cancellables = Set<AnyCancellable>() //permet de garder actif l'abonnement au publisher
 	
 	//nettoie la base avant chaque test
 	private func emptyEntities(context: NSManagedObjectContext) {
@@ -50,7 +50,7 @@ final class ExerciseListViewModelTests: XCTestCase {
 	
 	func test_WhenNoExerciseIsInDatabase_FetchExercise_returnEmptyList() {
 		//Clean manually all data
-		let persistenceController = PersistenceController(inMemory: true)
+		let persistenceController = PersistenceController(inMemory: true) //nvelle instance pour isoler les tests
 		let context = persistenceController.container.viewContext
 		emptyEntities(context: context)
 		let repository = ExerciseRepository(viewContext: context)
