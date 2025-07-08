@@ -24,7 +24,6 @@ final class UserDataViewModelTests: XCTestCase {
 	}
 	
 	private func addUser(context: NSManagedObjectContext, firstName: String, lastName: String) {
-		print("addUser appelée")
 		let newUser = User(context: context)
 		newUser.firstName = firstName
 		newUser.lastName = lastName
@@ -91,12 +90,48 @@ final class UserDataViewModelTests: XCTestCase {
 		wait(for: [expectation1,expectation2], timeout: 10) //test attend que les deux expectation.fulfill() soient appelés sous max 10sec
 	}
 	
+	func test_ErrorThrowedByFetchUser_returnUserFirstNameMissing() {
+		//Clean manually all data
+		let persistenceController = PersistenceController(inMemory: true)
+		emptyEntities(context: persistenceController.container.viewContext)
+		let viewModel = UserDataViewModel(context: PersistenceController().container.viewContext, repository: UserRepositoryMock(scenario: .noFirstName))
+				
+		let expectation = XCTestExpectation(description: "fetchUser throws error when no firstName")
+		viewModel.$errorMessage
+			.dropFirst()
+			.sink { errorMessage in
+				XCTAssertEqual(errorMessage, "User firstName is missing")
+				XCTAssertTrue(viewModel.showAlert)
+				expectation.fulfill()
+			}
+		
+			.store(in : &cancellables) //conserve la souscription à @Published pendant tout le test
+	}
+	
+	func test_ErrorThrowedByFetchUser_returnUserLastNameMissing() {
+		//Clean manually all data
+		let persistenceController = PersistenceController(inMemory: true)
+		emptyEntities(context: persistenceController.container.viewContext)
+		let viewModel = UserDataViewModel(context: PersistenceController().container.viewContext, repository: UserRepositoryMock(scenario: .noLastName))
+				
+		let expectation = XCTestExpectation(description: "fetchUser throws error when no lastName")
+		viewModel.$errorMessage
+			.dropFirst()
+			.sink { errorMessage in
+				XCTAssertEqual(errorMessage, "User lastName is missing")
+				XCTAssertTrue(viewModel.showAlert)
+				expectation.fulfill()
+			}
+		
+			.store(in : &cancellables) //conserve la souscription à @Published pendant tout le test
+	}
+	
 	func test_ErrorThrowedByFetchUser_returnErrorMessage() {
 		//Clean manually all data
 		let persistenceController = PersistenceController(inMemory: true)
 		emptyEntities(context: persistenceController.container.viewContext)
 		
-		let viewModel = UserDataViewModel(context: persistenceController.container.viewContext, repository: UserRepositoryMock())
+		let viewModel = UserDataViewModel(context: persistenceController.container.viewContext, repository: UserRepositoryMock(scenario: .NSError))
 		
 		let expectation = XCTestExpectation(description: "fetchUser catch error")
 		viewModel.$errorMessage
@@ -108,5 +143,21 @@ final class UserDataViewModelTests: XCTestCase {
 			}
 		
 			.store(in : &cancellables) //conserve la souscription à @Published pendant tout le test
+	}
+	
+	func test_CoreDataLoadFailed_NotificationUpdates() {
+		// Given
+		let persistenceController = PersistenceController(inMemory: true)
+		let viewModel = UserDataViewModel(context: persistenceController.container.viewContext)
+		
+		// On simule une erreur et on fixe le message d'erreur static
+		PersistenceController.lastErrorMessage = "Erreur de chargement simulée"
+		
+		// When
+		NotificationCenter.default.post(name: .coreDataLoadFailed, object: nil)
+		
+		// Then
+		XCTAssertEqual(viewModel.errorMessage, "Erreur de chargement simulée")
+		XCTAssertTrue(viewModel.showAlert)
 	}
 }

@@ -129,7 +129,7 @@ final class ExerciseListViewModelTests: XCTestCase {
 		let context = persistenceController.container.viewContext
 		emptyEntities(context: context)
 		
-		let viewModel = ExerciseListViewModel(context: context, repository: ExerciseRepositoryMock(scenario: .success))
+		let viewModel = ExerciseListViewModel(context: context, repository: ExerciseRepositoryMock(scenario1: .unknownError, scenario2: .success))
 		
 		let expectation = XCTestExpectation(description: "fetchExercises catch error")
 
@@ -141,5 +141,20 @@ final class ExerciseListViewModelTests: XCTestCase {
 			}
 			.store(in: &cancellables)
 		wait(for: [expectation], timeout: 10)
+	}
+	
+	func test_Reload_Success() {
+		let persistenceController = PersistenceController(inMemory: true)
+		let context = persistenceController.container.viewContext
+		emptyEntities(context: context)
+		let viewModel = ExerciseListViewModel(context: context, repository: ExerciseRepositoryMock(scenario1: .success, scenario2: .success))
+		
+		viewModel.reload()
+		
+		XCTAssertEqual(viewModel.exercises.count, 1)
+		XCTAssertEqual(viewModel.exercises[0].duration, 10)
+		XCTAssertEqual(viewModel.exercises[0].intensity, 10)
+		XCTAssertFalse(viewModel.showAlert)
+		XCTAssertNil(viewModel.errorMessage)
 	}
 }

@@ -16,7 +16,7 @@
     <entity name="User" representedClassName=".User" syncable="YES" codeGenerationType="class">
         <attribute name="firstName" attributeType="String"/>
         <attribute name="lastName" attributeType="String"/>
-        <attribute name="password" attributeType="String"/>
+        <attribute name="password" optional="YES" attributeType="String"/>
         <relationship name="exercises" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Exercise" inverseName="user" inverseEntity="Exercise"/>
         <relationship name="sleeps" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Sleep" inverseName="user" inverseEntity="Sleep"/>
     </entity>

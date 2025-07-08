@@ -31,7 +31,7 @@ final class AddExerciseViewModelTests: XCTestCase {
 		let persistenceController = PersistenceController(inMemory: true)
 		emptyEntities(context: persistenceController.container.viewContext)
 
-		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext, repository: ExerciseRepositoryMock(scenario: .success))
+		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext, repository: ExerciseRepositoryMock(scenario1: .success, scenario2: .success))
 		let expectation1 = XCTestExpectation(description: "Wait for errorMessage update")
 		let expectation2 = XCTestExpectation(description: "Wait for showAlert update")
 		
@@ -62,7 +62,7 @@ final class AddExerciseViewModelTests: XCTestCase {
 		let persistenceController = PersistenceController(inMemory: true)
 		emptyEntities(context: persistenceController.container.viewContext)
 
-		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext, repository: ExerciseRepositoryMock(scenario: .exerciseError))
+		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext, repository: ExerciseRepositoryMock(scenario1: .success, scenario2: .exerciseError))
 		let expectation1 = XCTestExpectation(description: "Wait for errorMessage update")
 		let expectation2 = XCTestExpectation(description: "Wait for showAlert update")
 		
@@ -95,7 +95,7 @@ final class AddExerciseViewModelTests: XCTestCase {
 		let persistenceController = PersistenceController(inMemory: true)
 		emptyEntities(context: persistenceController.container.viewContext)
 
-		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext, repository: ExerciseRepositoryMock(scenario: .unknownError))
+		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext, repository: ExerciseRepositoryMock(scenario1: .success, scenario2: .unknownError))
 		let expectation1 = XCTestExpectation(description: "Wait for errorMessage update")
 		let expectation2 = XCTestExpectation(description: "Wait for showAlert update")
 		

@@ -86,11 +86,6 @@ class AddExerciseViewModel: ObservableObject {
 		let hour = calendar.component(.hour, from: timeOnlyDate)
 		let minute = calendar.component(.minute, from: timeOnlyDate)
 		
-		// Vérifier la plage (0-23 pour heures, 0-59 pour minutes)
-		guard (0...23).contains(hour), (0...59).contains(minute) else {
-			return nil
-		}
-		
 		var components = calendar.dateComponents([.year, .month, .day], from: Date())
 		components.hour = hour
 		components.minute = minute

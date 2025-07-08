@@ -6,11 +6,30 @@
 //
 
 import Foundation
+import CoreData
 @testable import Arista
 
+enum MockScenarioUserRepository {
+	case noFirstName
+	case noLastName
+	case NSError
+}
 
-final class UserRepositoryMock: UserRepositoryProtocol {
+struct UserRepositoryMock: UserRepositoryProtocol {
+	let scenario: MockScenarioUserRepository
+
 	func getUser() throws -> User? {
-		throw NSError(domain: "TestError", code: 999, userInfo: [NSLocalizedDescriptionKey: "Erreur simulée"])
+		switch scenario {
+		case .noFirstName:
+			let user = User(context: PersistenceController().container.viewContext)
+			user.lastName = "Durand"
+			return user
+		case .noLastName:
+			let user = User(context: PersistenceController().container.viewContext)
+			user.firstName = "Patrick"
+			return user
+		case .NSError:
+			throw NSError(domain: "TestError", code: 999, userInfo: [NSLocalizedDescriptionKey: "Erreur simulée"])
+		}
 	}
 }

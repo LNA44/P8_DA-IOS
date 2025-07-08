@@ -8,21 +8,37 @@
 import Foundation
 @testable import Arista
 
-enum MockScenarioExerciseRepository {
+enum MockScenarioFetchExerciseRepository {
 	case success
 	case exerciseError
 	case unknownError
 }
 
+enum MockScenarioGetExerciseRepository {
+	case success
+	case unknownError
+}
+
 struct ExerciseRepositoryMock: ExerciseRepositoryProtocol {
-	let scenario: MockScenarioExerciseRepository
+	let scenario1: MockScenarioGetExerciseRepository
+	let scenario2: MockScenarioFetchExerciseRepository
 	
 	func getExercise() throws -> [Exercise] {
-		throw NSError(domain: "TestError", code: 999, userInfo: [NSLocalizedDescriptionKey: "Erreur simulée"])
+		switch scenario1 {
+		case .success:
+			let exercise = Exercise(context: PersistenceController().container.viewContext)
+			exercise.duration = 10
+			exercise.intensity = 10
+			exercise.startTime = Date()
+			let exercises = [exercise]
+			return exercises
+		case .unknownError:
+			throw NSError(domain: "TestError", code: 999, userInfo: [NSLocalizedDescriptionKey: "Erreur simulée"])
+		}
 	}
 	
 	func addExercise(category: String, duration: Int, intensity: Int, startTime: Date) throws {
-		switch scenario {
+		switch scenario2 {
 		case .success:
 			// Simule un ajout réussi, ne lève pas d’erreur
 			return

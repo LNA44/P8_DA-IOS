@@ -29,16 +29,7 @@ class UserDataViewModel: ObservableObject {
 		} else {
 			self.repository = UserRepository(viewContext: context)
 		}
-		//Notification 1 : erreur d'enregistrement des données en mémoire lors des tests
-		NotificationCenter.default.publisher(for: .persistenceSaveError) // evenement créé à chaque notif
-			.sink { [weak self] _ in //recoit valeurs du publisher
-				if let message = PersistenceController.lastErrorMessage {
-					self?.errorMessage  = message
-					self?.showAlert = true
-				}
-			}
-			.store(in: &cancellables) //stocke le retour du sink dans cancellables pour garder cet abonnement tant que le VM existe
-		//Notification 2 :
+		
 		NotificationCenter.default.publisher(for: .coreDataLoadFailed)
 			.sink { [weak self] _ in
 				if let message = PersistenceController.lastErrorMessage {
@@ -46,7 +37,7 @@ class UserDataViewModel: ObservableObject {
 					self?.showAlert = true
 				}
 			}
-			.store(in: &cancellables)
+			.store(in: &cancellables)//stocke le retour du sink dans cancellables pour garder cet abonnement tant que le VM existe
 		fetchUserData()
 	}
 	

@@ -8,6 +8,5 @@
 import Foundation
 // création notification erreur persistenceController
 extension Notification.Name {
-	static let persistenceSaveError = Notification.Name("persistenceSaveError")
 	static let coreDataLoadFailed = Notification.Name("coreDataLoadFailed")
 }
