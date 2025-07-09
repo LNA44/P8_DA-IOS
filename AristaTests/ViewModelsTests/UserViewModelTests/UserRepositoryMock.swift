@@ -17,7 +17,7 @@ enum MockScenarioUserRepository {
 
 struct UserRepositoryMock: UserRepositoryProtocol {
 	let scenario: MockScenarioUserRepository
-
+	
 	func getUser() throws -> User? {
 		switch scenario {
 		case .noFirstName:

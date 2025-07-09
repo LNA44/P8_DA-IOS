@@ -11,10 +11,9 @@ import Combine
 @testable import Arista
 
 final class AddExerciseViewModelTests: XCTestCase {
-
+	
 	var cancellables = Set<AnyCancellable>()
-		
-	//nettoie la base avant chaque test
+	
 	private func emptyEntities(context: NSManagedObjectContext) {
 		let fetchRequest = Exercise.fetchRequest()
 		let objects = try! context.fetch(fetchRequest)
@@ -27,153 +26,145 @@ final class AddExerciseViewModelTests: XCTestCase {
 	}
 	
 	func testAddExerciseSuccess() {
-		//Clean manually all data
 		let persistenceController = PersistenceController(inMemory: true)
 		emptyEntities(context: persistenceController.container.viewContext)
-
+		
 		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext, repository: ExerciseRepositoryMock(scenario1: .success, scenario2: .success))
 		let expectation1 = XCTestExpectation(description: "Wait for errorMessage update")
 		let expectation2 = XCTestExpectation(description: "Wait for showAlert update")
 		
-		viewModel.$errorMessage //observation du @Published exercises via combine
-			.sink { message in //quand valeur de exercises change(même s'il est vide alors le bloc est exécuté)
+		viewModel.$errorMessage
+			.sink { message in
 				XCTAssertEqual(message, nil)
 				expectation1.fulfill()
 			}
 		
-			.store(in : &cancellables) //conserve la souscription à @Published pendant tout le test
+			.store(in : &cancellables)
 		
-		viewModel.$showAlert //observation du @Published exercises via combine
-			.sink { alert in //quand valeur de exercises change(même s'il est vide alors le bloc est exécuté)
+		viewModel.$showAlert
+			.sink { alert in
 				XCTAssertEqual(alert, false)
 				expectation2.fulfill()
 			}
 		
-			.store(in : &cancellables) //conserve la souscription à @Published pendant tout le test
+			.store(in : &cancellables)
 		
 		let success = viewModel.addExercise()
 		XCTAssertTrue(success)
 		
-		wait(for: [expectation1, expectation2], timeout: 10) //test attend que expectation.fulfill() soit appelé sous max 10sec
+		wait(for: [expectation1, expectation2], timeout: 10)
 	}
 	
 	func testAddExercise_ExerciseError() {
-		//Clean manually all data
 		let persistenceController = PersistenceController(inMemory: true)
 		emptyEntities(context: persistenceController.container.viewContext)
-
+		
 		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext, repository: ExerciseRepositoryMock(scenario1: .success, scenario2: .exerciseError))
 		let expectation1 = XCTestExpectation(description: "Wait for errorMessage update")
 		let expectation2 = XCTestExpectation(description: "Wait for showAlert update")
 		
-		viewModel.$errorMessage //observation du @Published exercises via combine
-			.compactMap { $0 }   // ignore nil (valeur initiale)
-			.sink { message in //quand valeur de exercises change(même s'il est vide alors le bloc est exécuté)
+		viewModel.$errorMessage
+			.compactMap { $0 }  
+			.sink { message in
 				XCTAssertEqual(message, "The duration is invalid")
 				expectation1.fulfill()
 			}
 		
-			.store(in : &cancellables) //conserve la souscription à @Published pendant tout le test
+			.store(in : &cancellables)
 		
-		viewModel.$showAlert //observation du @Published exercises via combine
-			.filter { $0 == true }   // ignore false (valeur initiale)
-			.sink { alert in //quand valeur de exercises change(même s'il est vide alors le bloc est exécuté)
+		viewModel.$showAlert
+			.filter { $0 == true }
+			.sink { alert in
 				XCTAssertEqual(alert, true)
 				expectation2.fulfill()
 			}
 		
-			.store(in : &cancellables) //conserve la souscription à @Published pendant tout le test
+			.store(in : &cancellables)
 		
 		let success = viewModel.addExercise()
 		XCTAssertFalse(success)
 		
-		wait(for: [expectation1, expectation2], timeout: 10) //test attend que expectation.fulfill() soit appelé sous max 10sec
+		wait(for: [expectation1, expectation2], timeout: 10)
 	}
 	
 	func testAddExercise_UnknownError() {
-		//Clean manually all data
 		let persistenceController = PersistenceController(inMemory: true)
 		emptyEntities(context: persistenceController.container.viewContext)
-
+		
 		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext, repository: ExerciseRepositoryMock(scenario1: .success, scenario2: .unknownError))
 		let expectation1 = XCTestExpectation(description: "Wait for errorMessage update")
 		let expectation2 = XCTestExpectation(description: "Wait for showAlert update")
 		
-		viewModel.$errorMessage //observation du @Published exercises via combine
-			.compactMap { $0 }   // ignore nil (valeur initiale)
-			.sink { message in //quand valeur de exercises change(même s'il est vide alors le bloc est exécuté)
+		viewModel.$errorMessage
+			.compactMap { $0 }
+			.sink { message in
 				XCTAssertTrue(message.starts(with: "Unknown error happened :"))
 				expectation1.fulfill()
 			}
 		
-			.store(in : &cancellables) //conserve la souscription à @Published pendant tout le test
+			.store(in : &cancellables)
 		
-		viewModel.$showAlert //observation du @Published exercises via combine
-			.filter { $0 == true }   // ignore false (valeur initiale)
-			.sink { alert in //quand valeur de exercises change(même s'il est vide alors le bloc est exécuté)
+		viewModel.$showAlert
+			.filter { $0 == true }
+			.sink { alert in
 				XCTAssertEqual(alert, true)
 				expectation2.fulfill()
 			}
 		
-			.store(in : &cancellables) //conserve la souscription à @Published pendant tout le test
+			.store(in : &cancellables)
 		
 		let success = viewModel.addExercise()
 		XCTAssertFalse(success)
 		
-		wait(for: [expectation1, expectation2], timeout: 10) //test attend que expectation.fulfill() soit appelé sous max 10sec
+		wait(for: [expectation1, expectation2], timeout: 10)
 	}
 	
 	func testConvertStringToStartDate_validTime_returnsCorrectDate() {
-		//Given
 		let persistenceController = PersistenceController(inMemory: true)
 		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext)
-		//When
+		
 		let result = viewModel.convertStringToStartDate("08:30")
-		//Then
+		
 		XCTAssertNotNil(result)
-
+		
 		let components = Calendar.current.dateComponents([.hour, .minute], from: result!)
 		XCTAssertEqual(components.hour, 8)
 		XCTAssertEqual(components.minute, 30)
 	}
-
+	
 	func testConvertStringToStartDate_invalidTimeFormat_returnsNil() {
-		//Given
 		let persistenceController = PersistenceController(inMemory: true)
 		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext)
-		//When
+		
 		let result = viewModel.convertStringToStartDate("not a time")
-		//Then
+		
 		XCTAssertNil(result)
 	}
 	
 	func testConvertStringToStartDate_invalidTime_returnsNil() {
-		//Given
 		let persistenceController = PersistenceController(inMemory: true)
 		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext)
-		//When
+		
 		let result = viewModel.convertStringToStartDate("25:00")
-		//Then
+		
 		XCTAssertNil(result)
 	}
-
+	
 	func testStartTimeString_valid_setsCorrectStartTime() {
-		//Given
 		let persistenceController = PersistenceController(inMemory: true)
 		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext)
-		//When
+		
 		viewModel.startTimeString = "14:00"
 		let components = Calendar.current.dateComponents([.hour, .minute], from: viewModel.startTime)
-		//Then
+		
 		XCTAssertEqual(components.hour, 14)
 		XCTAssertEqual(components.minute, 0)
 	}
-
+	
 	func testStartTimeString_invalid_setsDefaultStartTime() {
-		//Given
 		let persistenceController = PersistenceController(inMemory: true)
 		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext)
-		//When
+		
 		viewModel.startTimeString = "bad input"
 		let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: viewModel.startTime)
 		XCTAssertEqual(components.year, 2000)
@@ -183,7 +174,7 @@ final class AddExerciseViewModelTests: XCTestCase {
 		XCTAssertEqual(components.minute, 0)
 	}
 	
-
+	
 	func testDurationStringUpdatesDuration() {
 		let persistenceController = PersistenceController(inMemory: true)
 		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext)
@@ -191,7 +182,7 @@ final class AddExerciseViewModelTests: XCTestCase {
 		viewModel.durationString = "45"
 		XCTAssertEqual(viewModel.duration, 45)
 	}
-
+	
 	func testDurationStringInvalidIntDoesNotUpdateDuration() {
 		let persistenceController = PersistenceController(inMemory: true)
 		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext)
@@ -200,7 +191,7 @@ final class AddExerciseViewModelTests: XCTestCase {
 		viewModel.durationString = "abc" // invalide, didSet ne modifie pas duration
 		XCTAssertEqual(viewModel.duration, 10)
 	}
-
+	
 	func testIntensityStringUpdatesIntensity() {
 		let persistenceController = PersistenceController(inMemory: true)
 		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext)
@@ -208,7 +199,7 @@ final class AddExerciseViewModelTests: XCTestCase {
 		viewModel.intensityString = "3"
 		XCTAssertEqual(viewModel.intensity, 3)
 	}
-
+	
 	func testIntensityStringInvalidIntDoesNotUpdateIntensity() {
 		let persistenceController = PersistenceController(inMemory: true)
 		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext)

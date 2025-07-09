@@ -42,7 +42,6 @@ class AddExerciseViewModel: ObservableObject {
 	@Published var errorMessage: String?
 	@Published var showAlert: Bool = false
 	var viewContext: NSManagedObjectContext
-	//let repository: ExerciseRepositoryProtocol
 	
 	//MARK: -Private properties
 	private var repository: ExerciseRepositoryProtocol!
@@ -52,7 +51,7 @@ class AddExerciseViewModel: ObservableObject {
 		self.viewContext = context
 		if let repo = repository {
 			self.repository = repo
-		} else { //si aucun repo passé dans l'init
+		} else { 
 			self.repository = ExerciseRepository(viewContext: context)
 		}
 	}

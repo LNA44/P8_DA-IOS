@@ -37,7 +37,7 @@ class UserDataViewModel: ObservableObject {
 					self?.showAlert = true
 				}
 			}
-			.store(in: &cancellables)//stocke le retour du sink dans cancellables pour garder cet abonnement tant que le VM existe
+			.store(in: &cancellables)
 		fetchUserData()
 	}
 	

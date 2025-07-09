@@ -11,9 +11,8 @@ import Combine
 @testable import Arista
 
 final class ExerciseListViewModelTests: XCTestCase {
-	var cancellables = Set<AnyCancellable>() //permet de garder actif l'abonnement au publisher
+	var cancellables = Set<AnyCancellable>()
 	
-	//nettoie la base avant chaque test
 	private func emptyEntities(context: NSManagedObjectContext) {
 		let fetchRequest = Exercise.fetchRequest()
 		let objects = try! context.fetch(fetchRequest)
@@ -24,7 +23,7 @@ final class ExerciseListViewModelTests: XCTestCase {
 		
 		try! context.save()
 	}
-
+	
 	private func addExercise(context: NSManagedObjectContext, category: String, duration: Int, intensity: Int, startTime: Date, userFirstName: String, userLastName: String) {
 		let newUser = User(context: context)
 		newUser.firstName = userFirstName
@@ -40,38 +39,29 @@ final class ExerciseListViewModelTests: XCTestCase {
 		try! context.save()
 	}
 	
-	override func setUpWithError() throws {
-		// Put setup code here. This method is called before the invocation of each test method in the class.
-	}
-	
-	override func tearDownWithError() throws {
-		// Put setup code here. This method is called before the invocation of each test method in the class.
-	}
 	
 	func test_WhenNoExerciseIsInDatabase_FetchExercise_returnEmptyList() {
-		//Clean manually all data
-		let persistenceController = PersistenceController(inMemory: true) //nvelle instance pour isoler les tests
+		let persistenceController = PersistenceController(inMemory: true)
 		let context = persistenceController.container.viewContext
 		emptyEntities(context: context)
 		let repository = ExerciseRepository(viewContext: context)
 		let viewModel = ExerciseListViewModel(context: context, repository: repository)
 		let expectation = XCTestExpectation(description: "Fetch empty list of exercises")
 		
-		viewModel.$exercises //observation du @Published exercises via combine
-			.sink { exercises in //quand valeur de exercises change(même s'il est vide alors le bloc est exécuté)
+		viewModel.$exercises
+			.sink { exercises in
 				XCTAssertTrue(exercises.isEmpty)
 				expectation.fulfill()
 			}
 		
-			.store(in : &cancellables) //conserve la souscription à @Published pendant tout le test
-		wait(for: [expectation], timeout: 10) //test attend que expectation.fulfill() soit appelé sous max 10sec
+			.store(in : &cancellables)
+		wait(for: [expectation], timeout: 10)
 	}
-
+	
 	func test_WhenAddingOneExerciseInDatabase_FetchExercise_ReturnAListContainingThisExercise() {
-		//clean manually all data
 		let persistenceController = PersistenceController(inMemory: true)
 		let context = persistenceController.container.viewContext
-
+		
 		emptyEntities(context: context)
 		let date = Date()
 		addExercise(context: persistenceController.container.viewContext, category: "Football", duration:10, intensity: 5, startTime: date, userFirstName: "Eric", userLastName: "Marcus")
@@ -90,19 +80,18 @@ final class ExerciseListViewModelTests: XCTestCase {
 				expectation.fulfill()
 			}
 			.store(in: &cancellables)
-			wait(for: [expectation], timeout: 10)
+		wait(for: [expectation], timeout: 10)
 	}
-
+	
 	func test_WhenAddingMultipleExerciseInDatabase_FetchExercise_ReturnAListContainingTheExerciseInTheRightOrder() {
-		// clean manually all data
 		let persistenceController = PersistenceController(inMemory: true)
 		let context = persistenceController.container.viewContext
-
+		
 		emptyEntities(context: context)
 		let date1 = Date()
 		let date2 = Date(timeIntervalSinceNow: -(60*60*24))
 		let date3 = Date(timeIntervalSinceNow: -(60*60*24*2))
-
+		
 		addExercise(context: context, category: "Football", duration: 10, intensity: 5,startTime: date1, userFirstName: "Ericn", userLastName: "Marcusi")
 		addExercise(context: context, category: "Running", duration: 120, intensity: 1, startTime: date3, userFirstName: "Ericb", userLastName: "Marceau")
 		addExercise(context: context, category: "Fitness", duration: 30, intensity: 5, startTime: date2, userFirstName: "Frédericp", userLastName: "Marcus")
@@ -124,7 +113,6 @@ final class ExerciseListViewModelTests: XCTestCase {
 	}
 	
 	func test_ErrorThrowedByFetchExercises_returnErrorMessage() {
-		// clean manually all data
 		let persistenceController = PersistenceController(inMemory: true)
 		let context = persistenceController.container.viewContext
 		emptyEntities(context: context)
@@ -132,7 +120,7 @@ final class ExerciseListViewModelTests: XCTestCase {
 		let viewModel = ExerciseListViewModel(context: context, repository: ExerciseRepositoryMock(scenario1: .unknownError, scenario2: .success))
 		
 		let expectation = XCTestExpectation(description: "fetchExercises catch error")
-
+		
 		viewModel.$errorMessage
 			.sink { errorMessage in
 				XCTAssertEqual(errorMessage, "Unknown error happened : Erreur simulée")

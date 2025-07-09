@@ -10,7 +10,7 @@ import CoreData
 @testable import Arista
 
 final class SleepRepositoryTests: XCTestCase {
-	//nettoie la base avant chaque test
+	
 	private func emptyEntities(context: NSManagedObjectContext) {
 		let fetchRequest = Exercise.fetchRequest()
 		let objects = try! context.fetch(fetchRequest)
@@ -37,40 +37,33 @@ final class SleepRepositoryTests: XCTestCase {
 	}
 	
 	func test_WhenNoSleepSessionIsInDatabase_GetSleepSessions_ReturnEmptyList() {
-		//Given
 		let persistenceController = PersistenceController(inMemory: true) //charge un store Core Data temporaire en mémoire
 		emptyEntities(context: persistenceController.container.viewContext) // s'assure que la base est vide
-		
 		let data = SleepRepository(viewContext: persistenceController.container.viewContext)
-		//When
+		
 		let sleeps = try! data.getSleepSessions()
-		//Then
+		
 		XCTAssert(sleeps.isEmpty == true)
 	}
-
+	
 	func test_WhenAddidOneSleepSessionInDataBase_GetSleepSessions_ReturnAListContainingTheSleepSessions() {
-		//Given
 		let persistenceController = PersistenceController(inMemory: true)
 		emptyEntities(context: persistenceController.container.viewContext)
 		let date = Date()
-		
 		addSleepSession(context: persistenceController.container.viewContext, duration: 22, quality: 3, startDate: date, userFirstName: "Eric", userLastName: "Marceau")
-		
 		let data = SleepRepository(viewContext: persistenceController.container.viewContext)
-		//When
+		
 		let sleeps = try! data.getSleepSessions()
-		//Then
+		
 		XCTAssert(sleeps.isEmpty == false)
 		XCTAssertEqual(sleeps.first?.duration, 22)
 		XCTAssertEqual(sleeps.first?.quality, 3)
 		XCTAssertEqual(sleeps.first?.startDate, date)
 	}
-
+	
 	func test_WhenAddingMultipleSleepSessionsInDataBase_GetSleepSessions_ReturnAListContanaingTheSleepSessionsInTheRightOrder() {
-		//Given
 		let persistenceController = PersistenceController(inMemory: true)
 		emptyEntities(context: persistenceController.container.viewContext)
-		
 		let date1 = Date()
 		let date2 = Date(timeIntervalSinceNow: -(60*60*24))
 		let date3 = Date(timeIntervalSinceNow: -(60*60*24*2))
@@ -78,9 +71,9 @@ final class SleepRepositoryTests: XCTestCase {
 		addSleepSession(context: persistenceController.container.viewContext, duration: 45, quality: 1, startDate: date1, userFirstName: "Eric", userLastName: "Marceau")
 		addSleepSession(context: persistenceController.container.viewContext, duration: 10, quality: 6, startDate: date3, userFirstName: "Eric", userLastName: "Marceau")
 		let data = SleepRepository(viewContext: persistenceController.container.viewContext)
-		//When
+		
 		let sleeps = try! data.getSleepSessions()
-		//Then
+		
 		XCTAssert(sleeps.count == 3)
 		XCTAssertEqual(sleeps[0].duration, 45)
 		XCTAssertEqual(sleeps[1].duration, 22)

@@ -8,7 +8,7 @@
 import Foundation
 import CoreData
 
-protocol ExerciseRepositoryProtocol { //permet de le mocker
+protocol ExerciseRepositoryProtocol {
 	func getExercise() throws -> [Exercise]
 	func addExercise(category: String, duration: Int, intensity: Int, startTime: Date) throws
 }
@@ -33,9 +33,9 @@ struct ExerciseRepository: ExerciseRepositoryProtocol {
 	
 	//MARK: -Methods
 	func getExercise() throws -> [Exercise] {
-		let request = Exercise.fetchRequest() //création requete : récupère tous les objets exercise
-		request.sortDescriptors = [NSSortDescriptor(SortDescriptor<Exercise>(\.startTime, order:.reverse))] //du plus récent au plus ancien
-		return try viewContext.fetch(request) //exécute la requete : récupère les données de CoreData
+		let request = Exercise.fetchRequest()
+		request.sortDescriptors = [NSSortDescriptor(SortDescriptor<Exercise>(\.startTime, order:.reverse))] 
+		return try viewContext.fetch(request)
 	}
 	
 	func addExercise(category: String, duration: Int, intensity: Int, startTime: Date) throws {

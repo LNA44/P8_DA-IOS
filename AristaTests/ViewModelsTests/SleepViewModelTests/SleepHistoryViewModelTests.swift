@@ -13,7 +13,6 @@ import Combine
 final class SleepHistoryViewModelTests: XCTestCase {
 	var cancellables = Set<AnyCancellable>()
 	
-	//nettoie la base avant chaque test
 	private func emptyEntities(context: NSManagedObjectContext) {
 		let fetchRequest = User.fetchRequest()
 		let objects = try! context.fetch(fetchRequest)
@@ -43,7 +42,6 @@ final class SleepHistoryViewModelTests: XCTestCase {
 	}
 	
 	func test_WhenNoSleepSessionIsInDatabase_FetchSleepSessions_returnEmptySleepSessions() {
-		//Clean manually all data
 		let persistenceController = PersistenceController(inMemory: true)
 		let context = persistenceController.container.viewContext
 		emptyEntities(context: context)
@@ -52,23 +50,22 @@ final class SleepHistoryViewModelTests: XCTestCase {
 		
 		let expectation = XCTestExpectation(description: "Fetch empty sleep session")
 		
-		viewModel.$sleepSessions //observation du @Published firstName via combine
-			.sink { session in //quand valeur de firstName change(même s'il est vide alors le bloc est exécuté)
+		viewModel.$sleepSessions
+			.sink { session in
 				XCTAssertEqual(session, [])
 				expectation.fulfill()
 			}
-			.store(in : &cancellables) //conserve la souscription à @Published pendant tout le test
-		wait(for: [expectation], timeout: 10) //test attend que les deux expectation.fulfill() soient appelés sous max 10sec
+			.store(in : &cancellables)
+		wait(for: [expectation], timeout: 10)
 	}
 	
 	func test_WhenAddingOneSleepSessionInDatabase_FetchSleepSessions_ReturnAListContainingThisSleepSession() {
-		//Clean manually all data
 		let persistenceController = PersistenceController(inMemory: true)
 		let context = persistenceController.container.viewContext
 		emptyEntities(context: context)
 		
 		let date = Date()
-				
+		
 		addSleepSession(context: context, duration: 25, quality: 7, startDate: date, userFirstName: "Eric", userLastName: "Marceau")
 		let repository = SleepRepository(viewContext: context)
 		let viewModel = SleepHistoryViewModel(context: context, repository: repository)
@@ -76,8 +73,8 @@ final class SleepHistoryViewModelTests: XCTestCase {
 		
 		let expectation = XCTestExpectation(description: "Fetch sleep session")
 		
-		viewModel.$sleepSessions //observation du @Published firstName via combine
-			.sink { session in //quand valeur de firstName change(même s'il est vide alors le bloc est exécuté)
+		viewModel.$sleepSessions
+			.sink { session in
 				print("sleepSessions changed: \(session)")
 				XCTAssertFalse(session.isEmpty)
 				XCTAssertEqual(session.first?.duration, 25)
@@ -85,26 +82,25 @@ final class SleepHistoryViewModelTests: XCTestCase {
 				XCTAssertEqual(session.first?.startDate, date)
 				expectation.fulfill()
 			}
-			.store(in : &cancellables) //conserve la souscription à @Published pendant tout le test
-		wait(for: [expectation], timeout: 10) //test attend que les deux expectation.fulfill() soient appelés sous max 10sec
+			.store(in : &cancellables)
+		wait(for: [expectation], timeout: 10)
 	}
 	
 	func test_ErrorThrowedByFetchSleepSessions_returnErrorMessage() {
-		//Clean manually all data
 		let persistenceController = PersistenceController(inMemory: true)
 		emptyEntities(context: persistenceController.container.viewContext)
 		
 		let viewModel = SleepHistoryViewModel(context: persistenceController.container.viewContext, repository: SleepRepositoryMock())
 		
 		let expectation = XCTestExpectation(description: "fetchSleepSessions catch error")
-
+		
 		viewModel.$errorMessage
 			.dropFirst()
-			.sink { errorMessage in //quand valeur de firstName change(même s'il est vide alors le bloc est exécuté)
+			.sink { errorMessage in
 				XCTAssertEqual(errorMessage, "Unknown error happened : Erreur simulée")
 				XCTAssertTrue(viewModel.showAlert)
 				expectation.fulfill()
 			}
-			.store(in : &cancellables) //conserve la souscription à @Published pendant tout le test
+			.store(in : &cancellables) 
 	}
 }

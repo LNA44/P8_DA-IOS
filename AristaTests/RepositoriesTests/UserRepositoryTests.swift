@@ -10,7 +10,7 @@ import CoreData
 @testable import Arista
 
 final class UserRepositoryTests: XCTestCase {
-	//nettoie la base avant chaque test
+	
 	private func emptyEntities(context: NSManagedObjectContext) {
 		let fetchRequest = User.fetchRequest()
 		let objects = try! context.fetch(fetchRequest)
@@ -30,45 +30,37 @@ final class UserRepositoryTests: XCTestCase {
 	}
 	
 	func test_WhenNoUserIsInDatabase_GetUser_ReturnNil() {
-		//Given
-		let persistenceController = PersistenceController(inMemory: true) //charge un store Core Data temporaire en mémoire
-		emptyEntities(context: persistenceController.container.viewContext) // s'assure que la base est vide
-		
-		let data = UserRepository(viewContext: persistenceController.container.viewContext)
-		//When
-		let user = try! data.getUser()
-		//Then
-		XCTAssertNil(user)
-	}
-
-	func test_WhenAddingOneUserInDataBase_GetUser_ReturnTheUser() {
-		//Given
 		let persistenceController = PersistenceController(inMemory: true)
 		emptyEntities(context: persistenceController.container.viewContext)
-		
-		addUser(context: persistenceController.container.viewContext, firstName: "Eric", lastName: "Marceau")
-		
 		let data = UserRepository(viewContext: persistenceController.container.viewContext)
-		//When
+		
 		let user = try! data.getUser()
-		//Then
+		
+		XCTAssertNil(user)
+	}
+	
+	func test_WhenAddingOneUserInDataBase_GetUser_ReturnTheUser() {
+		let persistenceController = PersistenceController(inMemory: true)
+		emptyEntities(context: persistenceController.container.viewContext)
+		addUser(context: persistenceController.container.viewContext, firstName: "Eric", lastName: "Marceau")
+		let data = UserRepository(viewContext: persistenceController.container.viewContext)
+		
+		let user = try! data.getUser()
+		
 		XCTAssertNotNil(user)
 		XCTAssertEqual(user?.firstName, "Eric")
 		XCTAssertEqual(user?.lastName, "Marceau")
 	}
-
+	
 	func test_WhenAddingSeveralUsersInDataBase_GetUser_ReturnTheFirstUser() {
-		//Given
 		let persistenceController = PersistenceController(inMemory: true)
 		emptyEntities(context: persistenceController.container.viewContext)
-		
 		addUser(context: persistenceController.container.viewContext, firstName: "Eric", lastName: "Marceau")
 		addUser(context: persistenceController.container.viewContext, firstName: "Malika", lastName: "Dupont")
-		
 		let data = UserRepository(viewContext: persistenceController.container.viewContext)
-		//When
+		
 		let user = try! data.getUser()
-		//Then
+		
 		XCTAssertNotNil(user)
 		XCTAssertEqual(user?.firstName, "Eric")
 		XCTAssertEqual(user?.lastName, "Marceau")

@@ -22,11 +22,11 @@ class ExerciseListViewModel: ObservableObject {
 	init(context: NSManagedObjectContext, repository: ExerciseRepositoryProtocol? = nil) {
 		self.viewContext = context
 		if let repo = repository {
-			self.repository = repo //si repo fourni on l'utilise
+			self.repository = repo 
 		} else {
-			self.repository = ExerciseRepository(viewContext: context) // si aucun repo fourni on utilise ExerciseRepository
+			self.repository = ExerciseRepository(viewContext: context)
 		}
-		fetchExercises() //prépare les données avant la création de la vue -> améliore réactivité de l'UI
+		fetchExercises()
 	}
 	
 	//MARK: -Methods

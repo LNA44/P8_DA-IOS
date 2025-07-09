@@ -45,7 +45,6 @@ struct ExerciseRepositoryMock: ExerciseRepositoryProtocol {
 		case .exerciseError:
 			throw HandleErrors.ExerciseError.invalidDuration
 		case .unknownError:
-			// Simule une erreur inconnue
 			throw NSError(domain: "Test", code: 1, userInfo: nil)
 		}
 	}

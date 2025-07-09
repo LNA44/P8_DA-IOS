@@ -7,7 +7,7 @@
 
 import Foundation
 import CoreData
-//Crée les données de la base de données pour Sleep et User
+
 struct DefaultData {
 	//MARK: -Properties
 	let viewContext: NSManagedObjectContext
