@@ -46,7 +46,7 @@ final class SleepHistoryViewModelTests: XCTestCase {
 		let context = persistenceController.container.viewContext
 		emptyEntities(context: context)
 		let repository = SleepRepository(viewContext: context)
-		let viewModel = SleepHistoryViewModel(context: context, repository: repository)
+		let viewModel = SleepHistoryViewModel(repository: repository)
 		
 		let expectation = XCTestExpectation(description: "Fetch empty sleep session")
 		
@@ -68,7 +68,7 @@ final class SleepHistoryViewModelTests: XCTestCase {
 		
 		addSleepSession(context: context, duration: 25, quality: 7, startDate: date, userFirstName: "Eric", userLastName: "Marceau")
 		let repository = SleepRepository(viewContext: context)
-		let viewModel = SleepHistoryViewModel(context: context, repository: repository)
+		let viewModel = SleepHistoryViewModel(repository: repository)
 		
 		
 		let expectation = XCTestExpectation(description: "Fetch sleep session")
@@ -90,7 +90,7 @@ final class SleepHistoryViewModelTests: XCTestCase {
 		let persistenceController = PersistenceController(inMemory: true)
 		emptyEntities(context: persistenceController.container.viewContext)
 		
-		let viewModel = SleepHistoryViewModel(context: persistenceController.container.viewContext, repository: SleepRepositoryMock())
+		let viewModel = SleepHistoryViewModel(repository: SleepRepositoryMock())
 		
 		let expectation = XCTestExpectation(description: "fetchSleepSessions catch error")
 		

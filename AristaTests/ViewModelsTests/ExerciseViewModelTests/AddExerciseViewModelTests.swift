@@ -29,7 +29,7 @@ final class AddExerciseViewModelTests: XCTestCase {
 		let persistenceController = PersistenceController(inMemory: true)
 		emptyEntities(context: persistenceController.container.viewContext)
 		
-		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext, repository: ExerciseRepositoryMock(scenario1: .success, scenario2: .success))
+		let viewModel = AddExerciseViewModel(repository: ExerciseRepositoryMock(scenario1: .success, scenario2: .success))
 		let expectation1 = XCTestExpectation(description: "Wait for errorMessage update")
 		let expectation2 = XCTestExpectation(description: "Wait for showAlert update")
 		
@@ -56,7 +56,7 @@ final class AddExerciseViewModelTests: XCTestCase {
 		let persistenceController = PersistenceController(inMemory: true)
 		emptyEntities(context: persistenceController.container.viewContext)
 		
-		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext, repository: ExerciseRepositoryMock(scenario1: .success, scenario2: .exerciseError))
+		let viewModel = AddExerciseViewModel(repository: ExerciseRepositoryMock(scenario1: .success, scenario2: .exerciseError))
 		let expectation1 = XCTestExpectation(description: "Wait for errorMessage update")
 		let expectation2 = XCTestExpectation(description: "Wait for showAlert update")
 		
@@ -87,7 +87,7 @@ final class AddExerciseViewModelTests: XCTestCase {
 		let persistenceController = PersistenceController(inMemory: true)
 		emptyEntities(context: persistenceController.container.viewContext)
 		
-		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext, repository: ExerciseRepositoryMock(scenario1: .success, scenario2: .unknownError))
+		let viewModel = AddExerciseViewModel(repository: ExerciseRepositoryMock(scenario1: .success, scenario2: .unknownError))
 		let expectation1 = XCTestExpectation(description: "Wait for errorMessage update")
 		let expectation2 = XCTestExpectation(description: "Wait for showAlert update")
 		
@@ -115,8 +115,7 @@ final class AddExerciseViewModelTests: XCTestCase {
 	}
 	
 	func testConvertStringToStartDate_validTime_returnsCorrectDate() {
-		let persistenceController = PersistenceController(inMemory: true)
-		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext)
+		let viewModel = AddExerciseViewModel()
 		
 		let result = viewModel.convertStringToStartDate("08:30")
 		
@@ -128,8 +127,7 @@ final class AddExerciseViewModelTests: XCTestCase {
 	}
 	
 	func testConvertStringToStartDate_invalidTimeFormat_returnsNil() {
-		let persistenceController = PersistenceController(inMemory: true)
-		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext)
+		let viewModel = AddExerciseViewModel()
 		
 		let result = viewModel.convertStringToStartDate("not a time")
 		
@@ -137,8 +135,7 @@ final class AddExerciseViewModelTests: XCTestCase {
 	}
 	
 	func testConvertStringToStartDate_invalidTime_returnsNil() {
-		let persistenceController = PersistenceController(inMemory: true)
-		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext)
+		let viewModel = AddExerciseViewModel()
 		
 		let result = viewModel.convertStringToStartDate("25:00")
 		
@@ -146,8 +143,7 @@ final class AddExerciseViewModelTests: XCTestCase {
 	}
 	
 	func testStartTimeString_valid_setsCorrectStartTime() {
-		let persistenceController = PersistenceController(inMemory: true)
-		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext)
+		let viewModel = AddExerciseViewModel()
 		
 		viewModel.startTimeString = "14:00"
 		let components = Calendar.current.dateComponents([.hour, .minute], from: viewModel.startTime)
@@ -157,8 +153,7 @@ final class AddExerciseViewModelTests: XCTestCase {
 	}
 	
 	func testStartTimeString_invalid_setsDefaultStartTime() {
-		let persistenceController = PersistenceController(inMemory: true)
-		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext)
+		let viewModel = AddExerciseViewModel()
 		
 		viewModel.startTimeString = "bad input"
 		let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: viewModel.startTime)
@@ -171,16 +166,14 @@ final class AddExerciseViewModelTests: XCTestCase {
 	
 	
 	func testDurationStringUpdatesDuration() {
-		let persistenceController = PersistenceController(inMemory: true)
-		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext)
+		let viewModel = AddExerciseViewModel()
 		
 		viewModel.durationString = "45"
 		XCTAssertEqual(viewModel.duration, 45)
 	}
 	
 	func testDurationStringInvalidIntDoesNotUpdateDuration() {
-		let persistenceController = PersistenceController(inMemory: true)
-		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext)
+		let viewModel = AddExerciseViewModel()
 		
 		viewModel.duration = 10
 		viewModel.durationString = "abc" // invalide, didSet ne modifie pas duration
@@ -188,16 +181,14 @@ final class AddExerciseViewModelTests: XCTestCase {
 	}
 	
 	func testIntensityStringUpdatesIntensity() {
-		let persistenceController = PersistenceController(inMemory: true)
-		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext)
+		let viewModel = AddExerciseViewModel()
 		
 		viewModel.intensityString = "3"
 		XCTAssertEqual(viewModel.intensity, 3)
 	}
 	
 	func testIntensityStringInvalidIntDoesNotUpdateIntensity() {
-		let persistenceController = PersistenceController(inMemory: true)
-		let viewModel = AddExerciseViewModel(context: persistenceController.container.viewContext)
+		let viewModel = AddExerciseViewModel()
 		
 		viewModel.intensity = 1
 		viewModel.intensityString = "xyz" // invalide

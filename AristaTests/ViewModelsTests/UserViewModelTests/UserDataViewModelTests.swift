@@ -35,7 +35,7 @@ final class UserDataViewModelTests: XCTestCase {
 		emptyEntities(context: context)
 		
 		let repository = UserRepository(viewContext: context)
-		let viewModel = UserDataViewModel(context: context, repository: repository)
+		let viewModel = UserDataViewModel(repository: repository)
 		
 		let expectation1 = XCTestExpectation(description: "Fetch empty firstName")
 		let expectation2 = XCTestExpectation(description: "Fetch empty lastName")
@@ -64,7 +64,7 @@ final class UserDataViewModelTests: XCTestCase {
 		
 		addUser(context: context, firstName: "Eric", lastName: "Marceau")
 		let repository = UserRepository(viewContext: context)
-		let viewModel = UserDataViewModel(context: context, repository: repository)
+		let viewModel = UserDataViewModel(repository: repository)
 		
 		let expectation1 = XCTestExpectation(description: "Fetch firstName")
 		let expectation2 = XCTestExpectation(description: "Fetch lastName")
@@ -91,7 +91,7 @@ final class UserDataViewModelTests: XCTestCase {
 		//Clean manually all data
 		let persistenceController = PersistenceController(inMemory: true)
 		emptyEntities(context: persistenceController.container.viewContext)
-		let viewModel = UserDataViewModel(context: PersistenceController().container.viewContext, repository: UserRepositoryMock(scenario: .noFirstName))
+		let viewModel = UserDataViewModel(repository: UserRepositoryMock(scenario: .noFirstName))
 		
 		let expectation = XCTestExpectation(description: "fetchUser throws error when no firstName")
 		viewModel.$errorMessage
@@ -109,7 +109,7 @@ final class UserDataViewModelTests: XCTestCase {
 		
 		let persistenceController = PersistenceController(inMemory: true)
 		emptyEntities(context: persistenceController.container.viewContext)
-		let viewModel = UserDataViewModel(context: PersistenceController().container.viewContext, repository: UserRepositoryMock(scenario: .noLastName))
+		let viewModel = UserDataViewModel(repository: UserRepositoryMock(scenario: .noLastName))
 		
 		let expectation = XCTestExpectation(description: "fetchUser throws error when no lastName")
 		viewModel.$errorMessage
@@ -127,7 +127,7 @@ final class UserDataViewModelTests: XCTestCase {
 		let persistenceController = PersistenceController(inMemory: true)
 		emptyEntities(context: persistenceController.container.viewContext)
 		
-		let viewModel = UserDataViewModel(context: persistenceController.container.viewContext, repository: UserRepositoryMock(scenario: .NSError))
+		let viewModel = UserDataViewModel(repository: UserRepositoryMock(scenario: .NSError))
 		
 		let expectation = XCTestExpectation(description: "fetchUser catch error")
 		viewModel.$errorMessage
@@ -142,8 +142,7 @@ final class UserDataViewModelTests: XCTestCase {
 	}
 	
 	func test_CoreDataLoadFailed_NotificationUpdates() {
-		let persistenceController = PersistenceController(inMemory: true)
-		let viewModel = UserDataViewModel(context: persistenceController.container.viewContext)
+		let viewModel = UserDataViewModel()
 		PersistenceController.lastErrorMessage = "Erreur de chargement simulée"
 		
 		NotificationCenter.default.post(name: .coreDataLoadFailed, object: nil)

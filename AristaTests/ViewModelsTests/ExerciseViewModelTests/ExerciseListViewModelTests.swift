@@ -45,7 +45,7 @@ final class ExerciseListViewModelTests: XCTestCase {
 		let context = persistenceController.container.viewContext
 		emptyEntities(context: context)
 		let repository = ExerciseRepository(viewContext: context)
-		let viewModel = ExerciseListViewModel(context: context, repository: repository)
+		let viewModel = ExerciseListViewModel(repository: repository)
 		let expectation = XCTestExpectation(description: "Fetch empty list of exercises")
 		
 		viewModel.$exercises
@@ -67,7 +67,7 @@ final class ExerciseListViewModelTests: XCTestCase {
 		addExercise(context: persistenceController.container.viewContext, category: "Football", duration:10, intensity: 5, startTime: date, userFirstName: "Eric", userLastName: "Marcus")
 		let repository = ExerciseRepository(viewContext: context)
 		
-		let viewModel = ExerciseListViewModel(context: context, repository: repository)
+		let viewModel = ExerciseListViewModel(repository: repository)
 		let expectation = XCTestExpectation(description: "Fetch empty list of exercise")
 		
 		viewModel.$exercises
@@ -97,7 +97,7 @@ final class ExerciseListViewModelTests: XCTestCase {
 		addExercise(context: context, category: "Fitness", duration: 30, intensity: 5, startTime: date2, userFirstName: "Frédericp", userLastName: "Marcus")
 		
 		let repository = ExerciseRepository(viewContext: context)
-		let viewModel = ExerciseListViewModel(context: context, repository: repository)
+		let viewModel = ExerciseListViewModel(repository: repository)
 		let expectation = XCTestExpectation(description: "fetch empty list of exercise")
 		
 		viewModel.$exercises
@@ -117,7 +117,7 @@ final class ExerciseListViewModelTests: XCTestCase {
 		let context = persistenceController.container.viewContext
 		emptyEntities(context: context)
 		
-		let viewModel = ExerciseListViewModel(context: context, repository: ExerciseRepositoryMock(scenario1: .unknownError, scenario2: .success))
+		let viewModel = ExerciseListViewModel(repository: ExerciseRepositoryMock(scenario1: .unknownError, scenario2: .success))
 		
 		let expectation = XCTestExpectation(description: "fetchExercises catch error")
 		
@@ -135,7 +135,7 @@ final class ExerciseListViewModelTests: XCTestCase {
 		let persistenceController = PersistenceController(inMemory: true)
 		let context = persistenceController.container.viewContext
 		emptyEntities(context: context)
-		let viewModel = ExerciseListViewModel(context: context, repository: ExerciseRepositoryMock(scenario1: .success, scenario2: .success))
+		let viewModel = ExerciseListViewModel(repository: ExerciseRepositoryMock(scenario1: .success, scenario2: .success))
 		
 		viewModel.reload()
 		
