@@ -24,18 +24,4 @@ struct HandleErrors {
 			}
 		}
 	}
-	
-	enum PersistenceError: Error {
-		case failedToLoadStore(Error)
-		case failedToSaveContext(Error)
-		
-		var errorDescription: String? {
-			switch self {
-			case .failedToLoadStore(let error):
-				return "Failed to load the persistent store: \(error.localizedDescription)"
-			case .failedToSaveContext(let error):
-				return "Failed to save the context: \(error.localizedDescription)"
-			}
-		}
-	}
 }

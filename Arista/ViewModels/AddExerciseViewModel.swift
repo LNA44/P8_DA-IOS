@@ -57,18 +57,15 @@ class AddExerciseViewModel: ObservableObject {
 	}
 	
 	//MARK: -Methods
-	func addExercise() -> Bool {
+	func addExercise(){
 		do {
 			try repository.addExercise(category: category, duration: duration, intensity: intensity, startTime: startTime)
-			return true
 		} catch let error as HandleErrors.ExerciseError {
 			errorMessage = error.errorDescription
 			showAlert = true
-			return false
 		} catch {
 			errorMessage = "Unknown error happened : \(error.localizedDescription)"
 			showAlert = true
-			return false
 		}
 	}
 	

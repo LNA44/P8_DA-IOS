@@ -22,7 +22,8 @@ struct AddExerciseView: View {
 				}.formStyle(.grouped)
 				Spacer()
 				Button("Ajouter l'exercice") {
-					if viewModel.addExercise() {
+					if viewModel.errorMessage==nil {
+						viewModel.addExercise()
 						presentationMode.wrappedValue.dismiss()
 					}
 				}.buttonStyle(.borderedProminent)

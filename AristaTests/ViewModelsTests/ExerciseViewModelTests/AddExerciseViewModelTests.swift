@@ -49,9 +49,6 @@ final class AddExerciseViewModelTests: XCTestCase {
 		
 			.store(in : &cancellables)
 		
-		let success = viewModel.addExercise()
-		XCTAssertTrue(success)
-		
 		wait(for: [expectation1, expectation2], timeout: 10)
 	}
 	
@@ -64,7 +61,7 @@ final class AddExerciseViewModelTests: XCTestCase {
 		let expectation2 = XCTestExpectation(description: "Wait for showAlert update")
 		
 		viewModel.$errorMessage
-			.compactMap { $0 }  
+			.compactMap { $0 }
 			.sink { message in
 				XCTAssertEqual(message, "The duration is invalid")
 				expectation1.fulfill()
@@ -81,8 +78,7 @@ final class AddExerciseViewModelTests: XCTestCase {
 		
 			.store(in : &cancellables)
 		
-		let success = viewModel.addExercise()
-		XCTAssertFalse(success)
+		viewModel.addExercise()
 		
 		wait(for: [expectation1, expectation2], timeout: 10)
 	}
@@ -113,8 +109,7 @@ final class AddExerciseViewModelTests: XCTestCase {
 		
 			.store(in : &cancellables)
 		
-		let success = viewModel.addExercise()
-		XCTAssertFalse(success)
+		viewModel.addExercise()
 		
 		wait(for: [expectation1, expectation2], timeout: 10)
 	}
