@@ -6,25 +6,22 @@
 //
 
 import Foundation
-import CoreData
 
 class ExerciseListViewModel: ObservableObject {
 	//MARK: -Public properties
 	@Published var exercises = [Exercise]()
 	@Published var errorMessage: String?
 	@Published var showAlert: Bool = false
-	var viewContext: NSManagedObjectContext
 	
 	//MARK: -Private properties
 	private var repository: ExerciseRepositoryProtocol!
 	
 	//MARK: -Initialization
-	init(context: NSManagedObjectContext, repository: ExerciseRepositoryProtocol? = nil) {
-		self.viewContext = context
+	init(repository: ExerciseRepositoryProtocol? = nil) {
 		if let repo = repository {
 			self.repository = repo 
 		} else {
-			self.repository = ExerciseRepository(viewContext: context)
+			self.repository = ExerciseRepository()
 		}
 		fetchExercises()
 	}

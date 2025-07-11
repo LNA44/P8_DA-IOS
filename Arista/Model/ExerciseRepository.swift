@@ -18,8 +18,8 @@ struct ExerciseRepository: ExerciseRepositoryProtocol {
 	let viewContext: NSManagedObjectContext
 	
 	//MARK: -Initialization
-	init(viewContext: NSManagedObjectContext) {
-		self.viewContext = viewContext
+	init(viewContext: NSManagedObjectContext? = nil) {
+		self.viewContext = viewContext ?? PersistenceController.viewContext
 	}
 	
 	//MARK: -Enumerations

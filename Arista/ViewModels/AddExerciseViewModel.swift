@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import CoreData
 
 class AddExerciseViewModel: ObservableObject {
 	//MARK: -Public properties
@@ -41,18 +40,16 @@ class AddExerciseViewModel: ObservableObject {
 	@Published var intensity: Int = 0
 	@Published var errorMessage: String?
 	@Published var showAlert: Bool = false
-	var viewContext: NSManagedObjectContext
 	
 	//MARK: -Private properties
 	private var repository: ExerciseRepositoryProtocol!
 	
 	//MARK: -Initialization
-	init(context: NSManagedObjectContext, repository: ExerciseRepositoryProtocol? = nil) {
-		self.viewContext = context
+	init(repository: ExerciseRepositoryProtocol? = nil) {
 		if let repo = repository {
 			self.repository = repo
 		} else { 
-			self.repository = ExerciseRepository(viewContext: context)
+			self.repository = ExerciseRepository()
 		}
 	}
 	

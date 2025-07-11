@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import CoreData
 
 class SleepHistoryViewModel: ObservableObject {
 	//MARK: -Public properties
@@ -15,16 +14,14 @@ class SleepHistoryViewModel: ObservableObject {
 	@Published var showAlert: Bool = false
 	
 	//MARK: -Private properties
-	private var viewContext: NSManagedObjectContext
 	private var repository: SleepRepositoryProtocol!
 	
 	//MARK: -Initialization
-	init(context: NSManagedObjectContext, repository: SleepRepositoryProtocol? = nil) { 
-		self.viewContext = context
+	init(repository: SleepRepositoryProtocol? = nil) {
 		if let repo = repository {
 			self.repository = repo
 		} else { //si aucun repo passé dans l'init
-			self.repository = SleepRepository(viewContext: context)
+			self.repository = SleepRepository()
 		}
 		fetchSleepSessions()
 	}

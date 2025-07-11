@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import CoreData
 import Combine
 
 class UserDataViewModel: ObservableObject {
@@ -15,19 +14,17 @@ class UserDataViewModel: ObservableObject {
 	@Published var lastName: String = ""
 	@Published var errorMessage: String?
 	@Published var showAlert: Bool = false
-	var viewContext: NSManagedObjectContext
 	
 	//MARK: -Private properties
 	private var cancellables = Set<AnyCancellable>()
 	private var repository: UserRepositoryProtocol!
 	
 	//MARK: -Initialization
-	init(context: NSManagedObjectContext, repository: UserRepositoryProtocol? = nil) { 
-		self.viewContext = context
+	init(repository: UserRepositoryProtocol? = nil) {
 		if let repo = repository {
 			self.repository = repo
 		} else {
-			self.repository = UserRepository(viewContext: context)
+			self.repository = UserRepository()
 		}
 		
 		NotificationCenter.default.publisher(for: .coreDataLoadFailed)

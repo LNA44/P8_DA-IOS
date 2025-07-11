@@ -15,20 +15,17 @@ struct AristaApp: App {
 	var body: some Scene {
 		WindowGroup {
 			TabView {
-				UserDataView(viewModel: UserDataViewModel(context: persistenceController.container.viewContext))
-					.environment(\.managedObjectContext, persistenceController.container.viewContext) //passe un context a la vue et ses sous-vues
+				UserDataView(viewModel: UserDataViewModel())
 					.tabItem {
 						Label("Utilisateur", systemImage: "person")
 					}
 				
-				ExerciseListView(viewModel: ExerciseListViewModel(context: persistenceController.container.viewContext))
-					.environment(\.managedObjectContext, persistenceController.container.viewContext)
+				ExerciseListView(viewModel: ExerciseListViewModel())
 					.tabItem {
 						Label("Exercices", systemImage: "flame")
 					}
 				
-				SleepHistoryView(viewModel: SleepHistoryViewModel(context: persistenceController.container.viewContext))
-					.environment(\.managedObjectContext, persistenceController.container.viewContext)
+				SleepHistoryView(viewModel: SleepHistoryViewModel())
 					.tabItem {
 						Label("Sommeil", systemImage: "moon")
 					}

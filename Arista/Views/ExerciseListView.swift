@@ -45,7 +45,7 @@ struct ExerciseListView: View {
 		.sheet(isPresented: $showingAddExerciseView, onDismiss: {
 			viewModel.reload() //recharge les données à la disparition de AddExerciseView
 		}) {
-			AddExerciseView(viewModel: AddExerciseViewModel(context: viewModel.viewContext))
+			AddExerciseView(viewModel: AddExerciseViewModel())
 		}
 		.alert(isPresented: $viewModel.showAlert) {
 			Alert(title: Text("Error"), message: Text(viewModel.errorMessage ?? ""), dismissButton: .default(Text("OK")))
@@ -94,5 +94,5 @@ struct IntensityIndicator: View {
 }
 
 #Preview {
-	ExerciseListView(viewModel: ExerciseListViewModel(context: PersistenceController.preview.container.viewContext))
+	ExerciseListView(viewModel: ExerciseListViewModel())
 }

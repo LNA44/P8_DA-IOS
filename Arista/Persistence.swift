@@ -9,6 +9,7 @@ import CoreData
 //Gère l'accès et l'instanciation de la base CoreData
 struct PersistenceController {
 	static let shared = PersistenceController()
+	static let viewContext = shared.container.viewContext
 	static var lastErrorMessage: String?
 	
 	static var preview: PersistenceController = {
